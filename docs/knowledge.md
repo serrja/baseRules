@@ -4,6 +4,31 @@ Read the existing vault's AGENTS, navigation, project.json, plugins and template
 Back up notes/configuration privately. Preserve paths, IDs, checkboxes, attachments, backlinks,
 Canvas and bookmarks. Do not create a replacement vault or mirror-delete cloud objects.
 
+## Categories and ownership
+
+- `personal`: portable personal drafts, without invented biography.
+- `university`: forms based on representative existing course materials, across subjects where
+  their requirements differ. Read content before adapting the subject index, note or laboratory;
+  record source paths and structural findings privately, never publish grades, assignments or people.
+- `it`: a topic explains concepts and practice; [technical questions](../templates/obsidian/it/technical_questions.md)
+  own the shared question bank and link to topics instead of copying their explanations.
+- `work`: project experience and its separate two-column interview table.
+
+Use one H1, short H2/H3 headings, moderate emoji and only useful fields. Public source names use
+lowercase snake_case; content is Russian. Preserve user note names and mathematical/code syntax.
+A course index links existing material types; progress belongs to the nearest index only, not a
+second grade/progress database. Notes follow the actual explanation, definitions, conditions,
+formulas, examples and sources. Laboratories distinguish program inputs/runs, actual measurements
+and calculated/modelled results; keep only the fields required by the real assignment.
+Self-check prose prompts understanding, explanation and independent practice without adding a
+second completion checkbox. Existing student notes, tickets and their checkboxes stay intact.
+
+Changing a template type or path updates catalog, checker/tests, installed picker and provenance
+together. Moving the old university exam template to IT does not move existing exam notes or
+cloud documents. Do not add a replacement exam/question bank merely to restore the old path.
+Public rules use GFM; Obsidian-specific syntax stays in note templates and the private vault.
+Select published rules by an explicit reviewed ref, with no arbitrary main download at startup.
+
 ## Installation
 
 Copy only the ten note templates from the [catalog](../templates/obsidian/README.md) into the
@@ -18,7 +43,12 @@ In project-scope 1.3, create a note within the chosen section and invoke **Ша�
 The nearest project.json selects home/attachments/templates, with inheritance from parents.
 Its picker recursively includes Markdown under each configured directory and shows the category
 in the relative path. Existing global configuration can therefore keep one managed subtree;
-no duplicate flat library or plugin modification is needed. For a different installed version,
+no duplicate flat library or plugin modification is needed. This version labels choices from
+relative filenames, replacing underscores with spaces; it does not read a metadata display-name.
+A localized installed basename such as `it/Технические_вопросы.md` may map to public
+`it/technical_questions.md`: record that rename-only transformation, preserve source bytes and
+keep one installed copy. The picker still shows its configured category/global prefix.
+For a different installed version,
 verify recursion or configure its supported category paths before claiming installation succeeds.
 
 Only `{{title}}`, `{{project}}`, `{{date}}`, `{{date:YYYY-MM-DD}}` and `{{time}}` are supported by
@@ -26,7 +56,7 @@ project-scope 1.3. The supplied notes use `{{title}}`; descriptive `[Запол�
 link are manual prompts. Add a full vault-path wikilink to the nearest index and a verified Drive
 link where needed, then link the new note from that index. Mark completion only there.
 
-After an update, create one disposable note of every type through the actual installed plugin.
+After an update, create one disposable note of each changed type through the actual installed plugin.
 Verify selection, expansion, inheritance, return links, Drive fields and exact technical/interview
 tables; remove only those probes. File/plugin checks and native Obsidian GUI checks are separate
 results. A successful filesystem check does not prove interface rendering.

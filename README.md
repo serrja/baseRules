@@ -16,8 +16,8 @@ This repository owns shared policy and document templates; language scaffolds re
 | Category | Obsidian templates |
 | --- | --- |
 | Personal | [Profile](templates/obsidian/personal/profile.md), [experience](templates/obsidian/personal/experience.md), [interests](templates/obsidian/personal/interests.md), [goals](templates/obsidian/personal/goals.md) |
-| University | [Subject](templates/obsidian/university/subject.md), [note](templates/obsidian/university/note.md), [laboratory](templates/obsidian/university/laboratory.md), [exam](templates/obsidian/university/exam.md) |
-| IT | [Topic](templates/obsidian/it/topic.md) |
+| University | [Subject](templates/obsidian/university/subject.md), [note](templates/obsidian/university/note.md), [laboratory](templates/obsidian/university/laboratory.md) |
+| IT | [Topic](templates/obsidian/it/topic.md), [Технические вопросы](templates/obsidian/it/technical_questions.md) |
 | Work | [Project](templates/obsidian/work/project.md) |
 
 Use the [Obsidian catalog](templates/obsidian/README.md) to choose a note or the
