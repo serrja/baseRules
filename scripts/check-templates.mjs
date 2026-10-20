@@ -19,6 +19,9 @@ for (const path of expected) {
   assert.ok(!/\{\{(?!title\}\})/.test(text), `${path}: do not invent plugin variables`);
   assert.ok(!text.includes("[["), `${path}: no fixed private vault paths`);
   assert.ok(!/https?:\/\/(?:drive|docs)\.google\.com/.test(text), `${path}: no private cloud IDs`);
+  if (path.startsWith("university/")) {
+    assert.ok(text.includes("## Самопроверка\n"), `${path}: retain understanding, explanation and independent practice`);
+  }
   if (["it/topic.md", "university/note.md", "university/exam.md"].includes(path)) {
     assert.ok(text.includes(technical), `${path}: preserve the technical question table`);
   }

@@ -10,7 +10,7 @@ npm ci --ignore-scripts
 npm run check
 ```
 
-The check covers Markdown, local relative links and the ten-template contract. External links are
+The check covers Markdown, local relative links and the ten-template contract. Absolute URL schemes are excluded from this local check and
 checked separately when publishing, including anonymous raw URLs for the reviewed full commit.
 There is no application runtime, Docker image, Python bootstrap or automatic vault installer here.
 
