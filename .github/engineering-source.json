@@ -3,8 +3,8 @@
   "files": {
     "docker/quality.mk": {
       "source": "template/docker/quality.mk",
-      "sha256": "5da1c65ef9610cb28bf0652e908ec785c2cb37d677d1995856c28a292785eb85",
-      "revision": "1aaab606373980a6084ae1a69069280241fb27de"
+      "sha256": "2d84bce3b5425d78778ef45ebb49d49d64a5932833eb2ced170617663fddae40",
+      "revision": "2f416c3cdfc011dc36f9fbcca0420ecbf2f1ad37"
     },
     "docker/source_identity.sh": {
       "source": "template/docker/source_identity.sh",
@@ -13,5 +13,5 @@
     }
   },
   "revision": "1aaab606373980a6084ae1a69069280241fb27de",
-  "latestUpdateRevision": "1aaab606373980a6084ae1a69069280241fb27de"
+  "latestUpdateRevision": "2f416c3cdfc011dc36f9fbcca0420ecbf2f1ad37"
 }
