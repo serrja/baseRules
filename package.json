@@ -6,10 +6,16 @@
     "node": "24.x"
   },
   "scripts": {
-    "check": "npm run check:markdown && npm run check:links && npm run check:templates",
-    "check:markdown": "markdownlint \"**/*.md\" --dot --ignore node_modules",
-    "check:links": "find . -path ./node_modules -prune -o -name '*.md' -type f -print0 | xargs -0 -r -n1 markdown-link-check --config .markdown-link-check.json --quiet",
-    "check:templates": "node scripts/check-templates.mjs && node --test scripts/check-templates.test.mjs"
+    "check": "npm run check:markdown && npm run check:links && npm run check:templates && npm test",
+    "check:markdown": "markdownlint \"**/*.md\" --dot --ignore node_modules --ignore coverage",
+    "check:links": "find . \\( -path ./node_modules -o -path ./coverage -o -path ./.git \\) -prune -o -name \"*.md\" -type f -print0 | xargs -0 -r -n1 markdown-link-check --config .markdown-link-check.json --quiet",
+    "check:templates": "node scripts/check-templates.mjs",
+    "test": "node --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=coverage/junit.xml --test-reporter=lcov --test-reporter-destination=coverage/lcov.info scripts/*.test.mjs",
+    "version:show": "node scripts/release.mjs version",
+    "release:check": "node scripts/release.mjs release-check",
+    "build": "mkdir -p coverage/artifacts && npm pack --ignore-scripts --offline --pack-destination coverage/artifacts --json > coverage/pack.json && node scripts/release.mjs capture",
+    "verify": "node scripts/release.mjs verify",
+    "coverage": "node scripts/release.mjs coverage"
   },
   "devDependencies": {
     "markdown-link-check": "3.15.0",
@@ -26,5 +32,18 @@
     "micromark-extension-math": {
       "katex": "0.18.2"
     }
-  }
+  },
+  "version": "0.1.0",
+  "files": [
+    "AGENTS.md",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md",
+    "docs/",
+    "templates/",
+    "scripts/",
+    "Makefile",
+    "Dockerfile.quality",
+    "docker/",
+    ".github/engineering-source.json"
+  ]
 }
