@@ -1,11 +1,28 @@
 # 📚 Base rules
 
-Portable engineering norms and Russian Obsidian templates with placeholders only.
+Portable engineering norms and ten Russian Obsidian templates with placeholders only.
+This repository owns shared policy and document templates; language scaffolds remain in their owners.
 
-- [Engineering](docs/engineering.md)
-- [Documentation](docs/documentation.md)
-- [Knowledge and template installation](docs/knowledge.md)
-- [Templates](templates/obsidian/README.md)
+## Rules
+
+- [Engineering](docs/engineering.md): boundaries, Python and verified delivery.
+- [Documentation](docs/documentation.md): readable navigation and one owner per topic.
+- [Frontend](docs/frontend.md): TypeScript/Vue imports and spacing, native Dart style.
+- [Knowledge](docs/knowledge.md): managed template installation and safe Drive organization.
+- [Contributing](CONTRIBUTING.md): review and the documentation check.
+
+## 📝 Templates
+
+| Category | Obsidian templates |
+| --- | --- |
+| Personal | [Profile](templates/obsidian/personal/profile.md), [experience](templates/obsidian/personal/experience.md), [interests](templates/obsidian/personal/interests.md), [goals](templates/obsidian/personal/goals.md) |
+| University | [Subject](templates/obsidian/university/subject.md), [note](templates/obsidian/university/note.md), [laboratory](templates/obsidian/university/laboratory.md), [exam](templates/obsidian/university/exam.md) |
+| IT | [Topic](templates/obsidian/it/topic.md) |
+| Work | [Project](templates/obsidian/work/project.md) |
+
+Use the [Obsidian catalog](templates/obsidian/README.md) to choose a note or the
+[Drive guide](templates/drive/README.md) and [work project outline](templates/drive/work_project.md)
+for shared documents and attachments.
 
 Choose a full commit explicitly. Project policy specializes these norms; repository-local policy
 owns concrete contracts. No automatic download of `main` occurs at application or CI startup.
