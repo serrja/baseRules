@@ -1,6 +1,6 @@
 # Base rules
 
-Read [engineering](docs/engineering.md), [documentation](docs/documentation.md), and the
+Read [engineering](docs/engineering.md), [documentation](docs/documentation.md), [frontend](docs/frontend.md) when relevant, and the
 repository's local contracts before editing. For knowledge work read
 [knowledge](docs/knowledge.md) and the existing vault policy first.
 
