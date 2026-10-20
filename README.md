@@ -3,6 +3,14 @@
 Portable engineering norms and ten Russian Obsidian templates with placeholders only.
 This repository owns shared policy and document templates; language scaffolds remain in their owners.
 
+```bash
+make help
+make version
+make ci-local
+```
+
+[Development](docs/development.md) · [Versioning](docs/versioning.md) · [Releases](docs/releases.md) · [Changelog](CHANGELOG.md)
+
 ## Rules
 
 - [Engineering](docs/engineering.md): boundaries, Python and verified delivery.

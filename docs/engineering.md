@@ -28,3 +28,7 @@ Cache identity includes actual source/lock/Dockerfile/base/platform/trust inputs
 enter cache keys. Promote immutable artifacts without rebuilding at deploy. Keep rollback artifacts.
 Review the full diff, staged paths and secrets before an authorized commit/push/PR/merge.
 Preserve branch protections and check the exact current source, not a previous CI report.
+
+Shared [development interface](development.md), [version policy](versioning.md) and
+[release procedure](releases.md) define the delivery workflow. Language scaffolds own the native
+implementation; local contracts select applicable checks without imposing one directory tree.

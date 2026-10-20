@@ -1,0 +1,17 @@
+{
+  "repository": "https://github.com/serrja/pythonTemplate",
+  "files": {
+    "docker/quality.mk": {
+      "source": "template/docker/quality.mk",
+      "sha256": "2d84bce3b5425d78778ef45ebb49d49d64a5932833eb2ced170617663fddae40",
+      "revision": "2f416c3cdfc011dc36f9fbcca0420ecbf2f1ad37"
+    },
+    "docker/source_identity.sh": {
+      "source": "template/docker/source_identity.sh",
+      "sha256": "efe087bf133fc2c4c9a02ee4a3935e77d4a39ded3b14387c3dde0d90ef25ecc7",
+      "revision": "1aaab606373980a6084ae1a69069280241fb27de"
+    }
+  },
+  "revision": "1aaab606373980a6084ae1a69069280241fb27de",
+  "latestUpdateRevision": "2f416c3cdfc011dc36f9fbcca0420ecbf2f1ad37"
+}

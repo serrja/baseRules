@@ -7,6 +7,7 @@ Use Node 24 and the locked documentation tools:
 
 ```bash
 npm ci --ignore-scripts
+mkdir -p coverage
 npm run check
 ```
 
@@ -21,7 +22,8 @@ use `npm audit` and `npm audit --omit=dev` alongside the checks.
 
 The check covers Markdown, local relative links and the ten-template contract. Absolute URL schemes are excluded from this local check and
 checked separately when publishing, including anonymous raw URLs for the reviewed full commit.
-There is no application runtime, Docker image, Python bootstrap or automatic vault installer here.
+There is no application runtime image, Python bootstrap or automatic vault installer here.
+The [Docker tools path](docs/development.md) runs the same locked Node checks and packages the bundle.
 
 For a move, preserve unique content, record old/new paths and review downstream managed mappings.
 Install only the ten note templates using [the knowledge guide](docs/knowledge.md). Update full
