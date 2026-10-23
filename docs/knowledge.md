@@ -29,6 +29,13 @@ cloud documents. Do not add a replacement exam/question bank merely to restore t
 Public rules use GFM; Obsidian-specific syntax stays in note templates and the private vault.
 Select published rules by an explicit reviewed ref, with no arbitrary main download at startup.
 
+## Team information
+
+Shared tasks and goals use repository Issues and an authorized organization Project. Versioned
+Git documentation owns the team handbook and decisions. Obsidian retains personal notes and
+links; do not publish a personal vault or synchronize every checkbox. Preserve existing local
+task data until an agreed migration, and keep Project visibility separate from repository access.
+
 ## Installation
 
 Copy only the ten note templates from the [catalog](../templates/obsidian/README.md) into the

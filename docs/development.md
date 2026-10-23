@@ -1,40 +1,46 @@
 # Development
 
-This repository releases a rules and document-template bundle. It has no application runtime.
+Use three long-lived branches: `main` preserves the accepted line and remains the default,
+`dev` owns new work, and `test` is a candidate line updated only by an authorized promotion.
+`local` is a runtime environment, never a fourth branch. Preserve unique work and historical tags.
 
-## Daily commands
+## Daily cycle
 
-Install Git, Make, Docker with Buildx and a POSIX shell. From the exact repository root:
+Select the existing issue, switch to `dev`, implement its scope, review the diff and staged paths
+for conflicts/secrets, run `make lint`, then explicitly `git push origin dev` when authorized.
+Do not automatically merge, delete dev/test, run heavy checks or mark the issue Done after push.
+Record `implemented_in_dev`, the full SHA, `lint_passed`, `tests_not_run_by_policy` and remaining
+acceptance criteria. Shared tasks use repository Issues and one organization Project; shared
+handbooks live in Git. Personal notes are not a second canonical team backlog.
 
-```bash
-make help
-make version
-make ci-local
-```
+`make help` describes commands. `make check` is lint-only. `make format` is explicit formatting.
+`make test`, `make typecheck`, `make coverage`, `make build`, `make acceptance` and `make ci-local`
+remain manual. CI-local retains the complete acceptance graph; coverage below 100% is advisory,
+but an executed failing check still fails. Never replace a missing check with a success marker.
 
-`make check` runs Markdown/link checks and the Node test suite. `make test` runs the suite alone;
-`make coverage` validates its fresh LCOV result without repeating tests. `make build` uses native
-`npm pack`, and `make verify` checks the packed metadata, members, source identity and checksum.
-`make release-check` checks canonical metadata and the built bundle without publishing.
-`make ci-local` executes check, coverage, build, verify and release-check in that order, once.
+## Tools and workflows
 
-Docker builds only a locked Node tools image. BuildKit retains its local target/platform cache;
-each invocation executes checks again. The first build requires network access for the pinned
-base image, system packages and npm lock. Once prepared, `make ci-local OFFLINE=1` uses the
-existing matching tools image and fails as blocked when required inputs are absent. No Actions
-API, token, hosted cache or application container is required.
+For this documentation bundle, use Node 24 with `npm ci --ignore-scripts`, then `make lint`.
+The existing Docker tool image may run these same linters without rebuilding any product.
+Do not invoke a dependency installer, tests or build from save hooks or an ordinary pre-push hook.
+Native pinned lint tools may be prepared explicitly; missing tools are blocked, not passed.
 
-For a quick native check, Node 24 and the lockfile are sufficient:
+Heavy workflows in dev are manual-only. A new dispatch workflow in dev has no promised Actions
+button until separately activated in the default branch. Existing default-branch workflows and
+main/test protection are not changed by a dev push. Inspect every push/tag/create/schedule/release
+trigger before publishing refs; do not disable security checks or change default branch as a bypass.
+No test/build/publish/deploy is an automatic consequence of the normal dev cycle.
 
-```bash
-npm ci --ignore-scripts
-mkdir -p coverage
-npm run check
-```
+## Environments and history
 
-`coverage/` is the only ignored report directory. It holds source SHA, dirty state, content hash,
-command exit codes, tool versions, JUnit, LCOV, bundle and checksums. A changed source or tools
-image invalidates earlier evidence. Test/type/build errors and corrupt or missing reports fail;
-coverage below 100% is a warning. The checked bundle contains rules and placeholders only.
+Branches, environment identity, service routing, auth audience/scopes and artifact versions are
+separate contracts. Applications explicitly select `main`, `dev`, `test` or `local`; an unknown or
+unconfigured target fails before network access. Main requires explicit HTTPS. Local HTTP is
+limited to loopback, with a documented host/container mapping. Separate identities, token stores,
+caches, databases and storage across environments; switching a setting never carries credentials.
+
+Git preserves source/docs history. Issues, Project fields and discussions live in GitHub; a clone
+or bundle is not a backup of their full history. A timestamped export is an optional snapshot,
+not another editable task master. Project visibility and repository access are checked separately.
 
 See [versioning](versioning.md), [releases](releases.md) and [contributing](../CONTRIBUTING.md).

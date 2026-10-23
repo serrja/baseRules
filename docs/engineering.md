@@ -21,7 +21,8 @@ Keep names/types with their owner; avoid a universal constants file.
 
 ## Verification and delivery
 
-Use existing linters, type checks, packaging tools, CliRunner and TestClient. Tests, invalid
+The daily dev cycle runs linters only; type checks, packaging, CliRunner and TestClient are
+manual acceptance tools. Tests, invalid
 configuration, corrupt reports and builds fail honestly. Coverage below 100% and changes in
 coverage produce warnings. No fake success, blanket skips or failure suppression.
 Cache identity includes actual source/lock/Dockerfile/base/platform/trust inputs; secrets never
