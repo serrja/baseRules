@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "categories": {
+    "common": "Общее",
+    "personal": "О себе",
+    "university": "Университет",
+    "it": "IT",
+    "work": "Работа"
+  },
+  "templates": [
+    {
+      "id": "common.note",
+      "path": "obsidian/common/note.md",
+      "kind": "markdown",
+      "category": "common",
+      "display_name": "Заметка"
+    },
+    {
+      "id": "common.navigation",
+      "path": "obsidian/common/navigation.md",
+      "kind": "markdown",
+      "category": "common",
+      "display_name": "Оглавление"
+    },
+    {
+      "id": "common.meeting",
+      "path": "obsidian/common/meeting.md",
+      "kind": "markdown",
+      "category": "common",
+      "display_name": "Встреча и решения"
+    },
+    {
+      "id": "common.instruction",
+      "path": "obsidian/common/instruction.md",
+      "kind": "markdown",
+      "category": "common",
+      "display_name": "Инструкция"
+    },
+    {
+      "id": "common.technical_note",
+      "path": "obsidian/common/technical_note.md",
+      "kind": "markdown",
+      "category": "common",
+      "display_name": "Разбор технической проблемы"
+    },
+    {
+      "id": "personal.profile",
+      "path": "obsidian/personal/profile.md",
+      "kind": "markdown",
+      "category": "personal",
+      "display_name": "О себе"
+    },
+    {
+      "id": "personal.experience",
+      "path": "obsidian/personal/experience.md",
+      "kind": "markdown",
+      "category": "personal",
+      "display_name": "Профессиональный путь"
+    },
+    {
+      "id": "personal.interests",
+      "path": "obsidian/personal/interests.md",
+      "kind": "markdown",
+      "category": "personal",
+      "display_name": "Интересы"
+    },
+    {
+      "id": "personal.goals",
+      "path": "obsidian/personal/goals.md",
+      "kind": "markdown",
+      "category": "personal",
+      "display_name": "Цель"
+    },
+    {
+      "id": "personal.interview",
+      "path": "obsidian/personal/interview.md",
+      "kind": "markdown",
+      "category": "personal",
+      "display_name": "Ответы на собеседовании"
+    },
+    {
+      "id": "university.subject",
+      "path": "obsidian/university/subject.md",
+      "kind": "markdown",
+      "category": "university",
+      "display_name": "Предмет и программа"
+    },
+    {
+      "id": "university.note",
+      "path": "obsidian/university/note.md",
+      "kind": "markdown",
+      "category": "university",
+      "display_name": "Конспект"
+    },
+    {
+      "id": "university.laboratory",
+      "path": "obsidian/university/laboratory.md",
+      "kind": "markdown",
+      "category": "university",
+      "display_name": "Лабораторная работа"
+    },
+    {
+      "id": "university.practice",
+      "path": "obsidian/university/practice.md",
+      "kind": "markdown",
+      "category": "university",
+      "display_name": "Задача и практика"
+    },
+    {
+      "id": "university.exam_preparation",
+      "path": "obsidian/university/exam_preparation.md",
+      "kind": "markdown",
+      "category": "university",
+      "display_name": "Подготовка к экзамену"
+    },
+    {
+      "id": "it.course",
+      "path": "obsidian/it/course.md",
+      "kind": "markdown",
+      "category": "it",
+      "display_name": "Полноценный курс"
+    },
+    {
+      "id": "it.topic",
+      "path": "obsidian/it/topic.md",
+      "kind": "markdown",
+      "category": "it",
+      "display_name": "Полный конспект темы"
+    },
+    {
+      "id": "it.technical_questions",
+      "path": "obsidian/it/technical_questions.md",
+      "kind": "markdown",
+      "category": "it",
+      "display_name": "Технические вопросы"
+    },
+    {
+      "id": "it.practice",
+      "path": "obsidian/it/practice.md",
+      "kind": "markdown",
+      "category": "it",
+      "display_name": "Практическое задание"
+    },
+    {
+      "id": "work.project",
+      "path": "obsidian/work/project.md",
+      "kind": "markdown",
+      "category": "work",
+      "display_name": "Рабочий или личный проект"
+    },
+    {
+      "id": "work.architecture",
+      "path": "obsidian/work/architecture.md",
+      "kind": "markdown",
+      "category": "work",
+      "display_name": "Архитектура проекта"
+    },
+    {
+      "id": "work.task",
+      "path": "obsidian/work/task.md",
+      "kind": "markdown",
+      "category": "work",
+      "display_name": "Разбор рабочей задачи"
+    },
+    {
+      "id": "work.interview",
+      "path": "obsidian/work/interview.md",
+      "kind": "markdown",
+      "category": "work",
+      "display_name": "Собеседование по проекту"
+    },
+    {
+      "id": "work.material",
+      "path": "obsidian/work/material.md",
+      "kind": "markdown",
+      "category": "work",
+      "display_name": "Материал и ссылка"
+    },
+    {
+      "id": "notebooks.python_practice",
+      "path": "notebooks/python_practice.ipynb",
+      "kind": "notebook",
+      "category": "it",
+      "display_name": "Практика Python в браузере"
+    }
+  ]
+}

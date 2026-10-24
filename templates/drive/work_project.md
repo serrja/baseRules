@@ -20,6 +20,7 @@ snake_case names. Read the [root mapping](README.md) and preserve object IDs/acc
 - Drive folder: `[verified private folder URL]`.
 - Authoritative native Doc: `[verified document URL]`.
 
-Keep one editable master. The Obsidian [project note](../obsidian/work/project.md) owns context,
-role, architecture, decisions, results and evidence for résumé statements; this outline only
-organizes the linked documents. It does not modify a résumé.
+Keep one editable master. The Obsidian [project note](../obsidian/work/project.md) owns the overview and links to
+[architecture](../obsidian/work/architecture.md), [tasks](../obsidian/work/task.md) and
+[interview preparation](../obsidian/work/interview.md). Each detailed explanation has one owner;
+this outline only organizes linked documents and does not modify a résumé.
