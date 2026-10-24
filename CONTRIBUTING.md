@@ -20,13 +20,13 @@ an additional advisory separate from the original toolchain's four advisories.
 Review upstream constraints before removing overrides. These are development tools only;
 use `npm audit` and `npm audit --omit=dev` alongside the checks.
 
-The check covers Markdown, local relative links and the ten-template contract. Absolute URL schemes are excluded from this local check and
+The check covers Markdown, local relative links and the manifest, question-format and notebook-template contracts. Absolute URL schemes are excluded from this local check and
 checked separately when publishing, including anonymous raw URLs for the reviewed full commit.
 There is no application runtime image, Python bootstrap or automatic vault installer here.
 The [Docker tools path](docs/development.md) runs the same locked Node checks and packages the bundle.
 
 For a move, preserve unique content, record old/new paths and review downstream managed mappings.
-Install only the ten note templates using [the knowledge guide](docs/knowledge.md). Update full
+Install only manifest Markdown entries using [the knowledge guide](docs/knowledge.md). Update full
 source pins/provenance together after review; do not rewrite historical pins or local overrides.
 Review the complete diff and staged paths before commit. A PR needs its successful current checks
 before an authorized merge; preserve a blocked PR and branch instead of bypassing checks.

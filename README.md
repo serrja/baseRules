@@ -1,7 +1,7 @@
 # 📚 Base rules
 
-Portable engineering norms and ten Russian Obsidian templates with placeholders only.
-This repository owns shared policy and document templates; language scaffolds remain in their owners.
+Portable engineering norms, 24 Russian Markdown templates and one browser notebook template.
+This repository owns shared policy and reusable forms; filled personal notes and code projects stay with their owners.
 
 ```bash
 make help
@@ -14,29 +14,28 @@ make ci-local
 ## Rules
 
 - [Engineering](docs/engineering.md): boundaries, Python and verified delivery.
-- [Documentation](docs/documentation.md): readable navigation and one owner per topic.
-- [Frontend](docs/frontend.md): TypeScript/Vue imports and spacing, native Dart style.
-- [Knowledge](docs/knowledge.md): managed template installation and safe Drive organization.
-- [Contributing](CONTRIBUTING.md): review and the documentation check.
+- [Documentation](docs/documentation.md): readable navigation and one owner per explanation.
+- [Frontend](docs/frontend.md): native tool and language conventions.
+- [Knowledge](docs/knowledge.md): complete courses, question preservation, browser practice and managed forms.
+- [Contributing](CONTRIBUTING.md): review and documentation checks.
 
 ## 📝 Templates
 
-| Category | Obsidian templates |
+| Category | Purpose |
 | --- | --- |
-| Personal | [Profile](templates/obsidian/personal/profile.md), [experience](templates/obsidian/personal/experience.md), [interests](templates/obsidian/personal/interests.md), [goals](templates/obsidian/personal/goals.md) |
-| University | [Subject](templates/obsidian/university/subject.md), [note](templates/obsidian/university/note.md), [laboratory](templates/obsidian/university/laboratory.md) |
-| IT | [Topic](templates/obsidian/it/topic.md), [Технические вопросы](templates/obsidian/it/technical_questions.md) |
-| Work | [Project](templates/obsidian/work/project.md) |
+| Common | Navigation, notes, meetings, instructions and technical problems |
+| Personal | Profile, experience, goals, interests and interview answers |
+| University | Subject, full note, laboratory, practice and exam preparation |
+| IT | Full course, full topic, technical questions and browser practice |
+| Work | Project, architecture, task, project interview and material link |
 
-Use the [Obsidian catalog](templates/obsidian/README.md) to choose a note or the
-[Drive guide](templates/drive/README.md) and [work project outline](templates/drive/work_project.md)
-for shared documents and attachments.
+Use the [catalog](templates/obsidian/README.md) and [manifest](templates/manifest.json) to choose a form.
+The [notebook](templates/notebooks/python_practice.ipynb) is an unfinished practice template, not a completed exercise.
+The [Drive guide](templates/drive/README.md) organizes existing linked documents without creating a second master.
 
-Choose a full commit explicitly. Project policy specializes these norms; repository-local policy
-owns concrete contracts. No automatic download of `main` occurs at application or CI startup.
-Code stays in Git, navigation in Obsidian, collaborative documents in native Docs, attachments
-in Drive. Private folder URLs and personal facts belong only in the private vault.
+Choose a reviewed full commit explicitly. Local policy owns concrete contracts; no automatic download
+of main or publication of a personal vault occurs. A generated course or successful file check does
+not prove that learning, browser execution or native Obsidian verification has happened.
 
-License: [MIT](LICENSE) for these original rules and templates. Adopting a template does not
-license the user's notes or assign their authorship to the template author. No third-party assets
-or fonts are bundled.
+License: [MIT](LICENSE) for these original rules and templates. Adopting a template does not license
+user notes or transfer their authorship. No third-party assets or fonts are bundled.
