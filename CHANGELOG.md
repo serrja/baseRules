@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.3.0-dev.0 (candidate)
+
+This prerelease candidate is prepared locally; publication and branch promotion require separate
+acceptance and authorization. It is a documented breaking minor before 1.0, not a stable release.
 
 The reusable source set now separates clean Markdown forms, author guides, the stable-ID manifest,
 compatibility notes and technical tests. All existing Markdown and notebook IDs/paths are preserved;
@@ -22,9 +25,18 @@ Clickable marks and native Obsidian behavior remain a future consumer responsibi
 
 Development follows one temporary working branch → test → dev → main with separate promotion
 permissions. Local acceptance uses the managed test lifecycle and exact ordered receipts, preserving
-upstream Docker snapshots and the existing version policy. No release number is agreed yet;
-package metadata stays at its current development version until an explicit decision. This section
-is preparation, not a published release, tag or permission to publish.
+upstream Docker snapshots and the existing version policy. Release guidance distinguishes lint-only
+snapshots from candidates with full manual acceptance and requires evidence for the exact commit.
+
+The structural checker rejects navigation-only answer targets and header-only tables, including
+isolated anchors, while allowing a technical paragraph with a link or a table with data. Empty
+program tables still require their own meaningful section; empty course and subject forms remain
+valid. Canonical links, source boundaries and the single human progress owner are preserved.
+
+The scoped `markdownlint-cli` override pins `minimatch` to `11.0.1` to address
+[GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249).
+The CLI version and lint rules remain unchanged; remove or revise the override only after an
+upstream fix and compatible glob/ignore behavior are verified. Other dependency overrides remain.
 
 ## 0.1.0
 
