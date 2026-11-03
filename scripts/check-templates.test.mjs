@@ -437,3 +437,74 @@ test("R2 catalog rejects removed sections in empty course and subject forms", ()
     });
   }
 });
+
+test("R1 rejects reference navigation and nested or Setext headings in whole targets and anchors", async (t) => {
+  const blocks = [
+    ["full reference link", "[Вопрос A][bank]\n"],
+    ["collapsed reference link", "[Вопрос A][]\n"],
+    ["shortcut reference link", "[Вопрос A]\n"],
+    ["reference list", "- [Вопрос A][bank]\n- [Вопрос A][]\n"],
+    ["separate reference links", "[Вопрос A][bank]\n\n[Вопрос A][]\n"],
+    ["definitions only", "[other]: bank.md\n"],
+    ["Setext H1", "Пустая секция\n=============\n"],
+    ["Setext H2", "Пустая секция\n-------------\n"],
+    ["multiline Setext heading", "Пустая\nсекция\n------\n"],
+    ["quoted heading", "> ## Пустая секция\n"],
+    ["list heading", "- ### Пустая секция\n"],
+    ["quoted empty table", "> | Поле | Значение |\n> | --- | --- |\n"],
+    ["unbordered empty table", "Поле | Значение\n--- | ---\n"],
+    ["quoted reference list", "> - [Вопрос A][bank]\n> - [Вопрос A][]\n"],
+    ["wikilinks", "[[Тема A]]\n\n[[Тема B]]\n"],
+  ];
+  for (const [name, block] of blocks) {
+    for (const anchored of [false, true]) {
+      await t.test(name + (anchored ? " at anchor" : " as whole file"), () => {
+        const text = "# Техническая фикстура\n\n"
+          + (anchored ? "## Before\n\nТекст соседней секции.\n\n## Target\n\n" : "")
+          + block + (anchored ? "\n## After\n\nТекст соседней секции.\n" : "")
+          + "\n[bank]: bank.md\n[Вопрос A]: bank.md\n";
+        withAnswerFixture(text, (root, bank) => {
+          assert.throws(() => checkQuestionBank(bank("topic.md" + (anchored ? "#target" : "")), root, "bank.md"), /Empty topic/);
+          assert.equal(readFileSync(join(root, "topic.md"), "utf8"), text);
+        });
+      });
+    }
+  }
+});
+
+test("R1 anchor boundaries include Setext peers and parents without borrowing their content", async (t) => {
+  for (const [name, heading] of [["peer", "Other\n-----"], ["parent", "Other\n====="]]) {
+    await t.test(name, () => {
+      const text = "# Техническая фикстура\n\n## Target\n\n[Вопрос A][bank]\n\n" + heading
+        + "\n\nСодержимое соседнего раздела.\n\n[bank]: bank.md\n";
+      withAnswerFixture(text, (root, bank) => {
+        assert.throws(() => checkQuestionBank(bank("topic.md#target"), root, "bank.md"), /Empty topic/);
+      });
+    });
+  }
+  withAnswerFixture("# Фикстура\n\nTarget\n------\n\n## Other\n\nСоседнее содержимое.\n", (root, bank) => {
+    assert.throws(() => checkQuestionBank(bank("topic.md#target"), root, "bank.md"), /Empty topic/);
+  });
+});
+
+test("R1 keeps prose, data and code content with reference definitions outside the selected section", async (t) => {
+  const blocks = [
+    ["prose with reference", "Текст технической фикстуры со [связью][bank].\n"],
+    ["quoted prose", "> Текст технической фикстуры со [связью][bank].\n"],
+    ["table data with reference", "| Поле | Значение |\n| --- | --- |\n| Свойство | [Связь][bank] |\n"],
+    ["quoted table data", "> | Поле |\n> | --- |\n> | Свойство фикстуры |\n"],
+    ["nested subsection", "### Detail\n\nТекст технической фикстуры.\n"],
+    ["code", "```js\nconst fixture = 1;\n```\n"],
+  ];
+  for (const [name, block] of blocks) {
+    for (const heading of ["## Target", "Target\n------"]) {
+      await t.test(name + (heading.startsWith("#") ? " at ATX anchor" : " at Setext anchor"), () => {
+        const text = "# Фикстура\n\n" + heading + "\n\n" + block + "\n## Other\n\n[bank]: bank.md\n";
+        withAnswerFixture(text, (root, bank) => {
+          assert.equal(checkQuestionBank(bank("topic.md#target"), root, "bank.md"), 1);
+          assert.equal(readFileSync(join(root, "topic.md"), "utf8"), text);
+        });
+      });
+    }
+  }
+});

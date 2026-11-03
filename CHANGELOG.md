@@ -32,6 +32,8 @@ The structural checker rejects navigation-only answer targets and header-only ta
 isolated anchors, while allowing a technical paragraph with a link or a table with data. Empty
 program tables still require their own meaningful section; empty course and subject forms remain
 valid. Canonical links, source boundaries and the single human progress owner are preserved.
+Answer checks use Markdown tokens, including reference links, quoted headings and Setext section
+boundaries. The existing locked `marked` parser is now an explicit development dependency.
 
 The scoped `markdownlint-cli` override pins `minimatch` to `11.0.1` to address
 [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249).

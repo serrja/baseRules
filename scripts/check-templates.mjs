@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { dirname, isAbsolute, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { Lexer } from "marked";
 
 const technicalHeader = "| Вопрос | Короткий ответ | Развёрнутый ответ | Типичные ошибки |";
 const projectHeader = "| Вопрос | Ответ |";
@@ -90,28 +91,15 @@ export function checkProgram(text) {
 }
 
 // A structural non-emptiness check, not a judgment of explanation quality.
-function hasAnswerContent(text) {
-  const lines = text.replace(/<!--[\s\S]*?-->/g, "").replaceAll("{{title}}", "").split("\n");
-  const cells = (line) => line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim());
-  const separator = (cell) => /^:?-{3,}:?$/.test(cell);
-  for (let index = 0; index < lines.length; index++) {
-    const line = lines[index].trim();
-    if (!line || /^#{1,6}(?:\s|$)/.test(line) || /^(?:```|~~~)/.test(line)) continue;
-    const row = cells(line);
-    const next = cells(lines[index + 1] ?? "");
-    if (line.includes("|") && (lines[index + 1] ?? "").includes("|") && row.length === next.length && next.every(separator)) {
-      index++; // Header and delimiter do not establish that a table contains data.
-      continue;
-    }
-    const remainder = line
-      .replace(/^(?:>\s*)+/, "")
-      .replace(/^(?:[-+*]|\d+[.)])\s+/, "")
-      .replace(/!?\[[^\]]*\]\([^)]+\)/g, "")
-      .replace(/\[\[[^\]]+\]\]/g, "")
-      .replace(/https?:\/\/\S+/g, "");
-    if (/[\p{L}\p{N}]/u.test(remainder)) return true;
-  }
-  return false;
+function hasAnswerContent(tokens) {
+  return tokens.some((token) => {
+    if (["heading", "link", "image", "html", "def"].includes(token.type)) return false;
+    if (token.type === "table") return token.rows.some((row) => row.some((cell) => hasAnswerContent(cell.tokens)));
+    if (token.type === "list") return token.items.some((item) => hasAnswerContent(item.tokens));
+    if (token.tokens) return hasAnswerContent(token.tokens);
+    return ["text", "code", "codespan", "escape"].includes(token.type)
+      && /[\p{L}\p{N}]/u.test(token.text.replace(/\[\[[^\]]+\]\]/g, ""));
+  });
 }
 
 export function checkQuestionBank(text, root, bankPath) {
@@ -126,14 +114,15 @@ export function checkQuestionBank(text, root, bankPath) {
     assert.ok(link, "Detailed answer must link to its canonical explanation");
     const [target, anchor] = link[1].split("#");
     const actual = sourceFile(root, resolve(root, dirname(bankPath), target));
-    let answer = readFileSync(actual, "utf8");
+    // Parse the whole target first: reference definitions may live outside the chosen section.
+    let answer = Lexer.lex(readFileSync(actual, "utf8").replaceAll("{{title}}", ""));
     if (anchor) {
-      const lines = answer.split("\n");
-      const index = lines.findIndex((line) => line.startsWith("#") && line.replace(/^#+\s+/, "").toLowerCase().replace(/[^\p{L}\p{N} -]/gu, "").replace(/ /g, "-") === decodeURIComponent(anchor));
+      const index = answer.findIndex((token) => token.type === "heading"
+        && token.text.toLowerCase().replace(/[^\p{L}\p{N} -]/gu, "").replace(/ /g, "-") === decodeURIComponent(anchor));
       assert.ok(index >= 0, "Answer heading missing");
-      const depth = lines[index].match(/^#+/)[0].length;
-      const end = lines.findIndex((line, i) => i > index && new RegExp(`^#{1,${depth}} `).test(line));
-      answer = lines.slice(index + 1, end < 0 ? undefined : end).join("\n");
+      const depth = answer[index].depth;
+      const end = answer.findIndex((token, i) => i > index && token.type === "heading" && token.depth <= depth);
+      answer = answer.slice(index + 1, end < 0 ? undefined : end);
     }
     assert.ok(hasAnswerContent(answer), "Empty topic is a relationship, not a detailed answer");
   }
