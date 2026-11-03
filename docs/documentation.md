@@ -16,3 +16,7 @@ README link to that guide. README describes purpose, stage, real commands and re
 owns local restrictions. Repositories share style and ownership, not a mandatory identical tree.
 Rules repositories need only documentation/template checks; scaffolds, libraries, services,
 frontend and deployment owners keep their native tooling and useful directory layouts.
+
+For knowledge forms, [knowledge](knowledge.md) owns the clean-source contract. Author guides stay
+under docs/template-guides and technical fixtures under scripts; neither belongs to the managed
+Markdown picker. The manifest owns identity, while compatibility notes describe transitions.

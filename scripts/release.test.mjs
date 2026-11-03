@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, before, test } from "node:test";
@@ -17,6 +17,7 @@ before(() => {
   writeJson("package.json", pkg);
   writeJson("package-lock.json", { name: pkg.name, version: pkg.version, packages: { "": { version: pkg.version } } });
   writeJson("coverage/source.json", source);
+  writeJson("coverage/ci-plan.json", { scope: "full", checks: ["acceptance", "coverage", "build", "verify", "release-check"] });
   writeFileSync("README.md", "# Fixture\n\nNo personal data.\n");
 });
 after(() => { process.chdir(original); rmSync(root, { recursive: true, force: true }); });
@@ -69,4 +70,32 @@ test("receipt rejects source mutation and duplicate checks", () => {
   writeJson("coverage/source.json", { ...source, contentSha256: "c".repeat(64) });
   assert.throws(() => receipt("finish", ["--status", "passed"]), /Source changed/);
   writeJson("coverage/source.json", source);
+});
+
+test("full receipt follows acceptance plan and rejects a lint-only substitute", () => {
+  const checks = ["acceptance", "coverage", "build", "verify", "release-check"];
+  writeJson("coverage/ci-plan.json", { scope: "full", checks: ["check", ...checks.slice(1)] });
+  assert.throws(() => receipt("init", []), /Incomplete mandatory plan/);
+  writeJson("coverage/ci-plan.json", { scope: "full", checks });
+  receipt("init", []);
+  for (const name of checks.slice(1)) receipt("record", ["--name", name, "--command", `make ${name}`, "--exit-code", "0"]);
+  assert.throws(() => receipt("finish", ["--status", "passed"]), /Incomplete planned checks/);
+  receipt("init", []);
+  for (const name of checks) receipt("record", ["--name", name, "--command", `make ${name}`, "--exit-code", "0"]);
+  receipt("finish", ["--status", "passed"]);
+  const report = JSON.parse(readFileSync("coverage/ci-local.json", "utf8"));
+  assert.equal(report.status, "passed");
+  assert.equal(report.scope, "full");
+  assert.equal(report.artifacts.length, 1);
+});
+
+test("scoped receipt preserves its scope and exact ordered checks", () => {
+  writeJson("coverage/ci-plan.json", { scope: "scoped", checks: ["lint"] });
+  receipt("init", []);
+  receipt("record", ["--name", "lint", "--command", "make lint", "--exit-code", "0"]);
+  receipt("finish", ["--status", "passed"]);
+  const report = JSON.parse(readFileSync("coverage/ci-local.json", "utf8"));
+  assert.equal(report.scope, "scoped");
+  assert.deepEqual(report.artifacts, []);
+  writeJson("coverage/ci-plan.json", { scope: "full", checks: ["acceptance", "coverage", "build", "verify", "release-check"] });
 });

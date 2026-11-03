@@ -2,6 +2,8 @@
 
 Read [AGENTS](AGENTS.md) and the [documentation rules](docs/documentation.md). Keep policy in one
 owner page and public templates free of private facts, Drive IDs and operational endpoints.
+Use one temporary working branch and the separately authorized working → test → dev → main
+route in [development](docs/development.md). Keep all three permanent branches.
 
 Use Node 24 and the locked documentation tools:
 
@@ -20,7 +22,9 @@ an additional advisory separate from the original toolchain's four advisories.
 Review upstream constraints before removing overrides. These are development tools only;
 use `npm audit` and `npm audit --omit=dev` alongside the checks.
 
-The check covers Markdown, local relative links and the manifest, question-format and notebook-template contracts. Absolute URL schemes are excluded from this local check and
+`make lint` checks Markdown and local links; `npm run check` additionally validates the manifest,
+clean source forms, question/program contracts and honest notebook metadata. Template unit tests
+are an explicit manual action: `node --test scripts/check-templates.test.mjs`. Absolute URL schemes are excluded from this local check and
 checked separately when publishing, including anonymous raw URLs for the reviewed full commit.
 There is no application runtime image, Python bootstrap or automatic vault installer here.
 The [Docker tools path](docs/development.md) runs the same locked Node checks and packages the bundle.

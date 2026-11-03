@@ -1,121 +1,125 @@
 # Knowledge and templates
 
-Read the existing vault policy, navigation, project.json, actual plugin code and template syntax
-before changing notes. Preserve source questions, IDs, versions, user progress, attachments,
-backlinks, Canvas and bookmarks. Keep a private backup and path map before migration.
-Do not create a replacement vault or mirror-delete cloud objects.
+This page owns the shared content and consumer contract. The [catalog](../templates/obsidian/README.md)
+links forms from the [manifest](../templates/manifest.json); [author guides](template-guides/README.md)
+explain their use. This repository changes reusable source only. Installation, filled notes,
+Obsidian/plugin work, real browser practice and vault/Drive migration require separate tasks.
 
-## Ownership and categories
+## Roles and ownership
 
-- `common`: navigation, a small note, a meeting, an instruction and a technical problem.
-- `personal`: profile, professional path, goals, interests and grouped interview answers.
-- `university`: subject navigation, a full note, laboratory, practice and exam preparation.
-- `it`: a full course, a full topic, the technical question bank and practical assignments.
-- `work`: project overview, architecture, task explanation, project interview and a material link.
+| Layer | Owner | Boundary |
+| --- | --- | --- |
+| Installable form | Manifest Markdown path under templates/obsidian/category | Clean material skeleton |
+| Author guide | docs/template-guides | Instructions never copied into a note or listed in the picker |
+| Catalog and identity | templates/manifest.json | Stable ID, kind, category, display name and source path |
+| Compatibility | [transition map](template-compatibility.md) | Old/new roles and preservation requirements |
+| Technical fixture | scripts tests and scripts/fixtures | Synthetic evidence, never a course or user progress |
+| Filled material | Consumer's existing files | Content supplied or separately requested by the owner |
 
-The [catalog](../templates/obsidian/README.md) and [manifest](../templates/manifest.json) describe
-24 Markdown forms and one notebook. Public files contain placeholders, never personal facts,
-private links, signatures, employers, invented projects or completed learning results.
-English source paths use snake_case; template content and display names are Russian.
+One detailed explanation has one owner. A course links lessons; the lesson itself is the full note,
+not a redirect to another copy. Technical questions, project questions and personal answers keep
+separate roles. Link shared explanations instead of copying theory, project details or answers.
+Do not create one file per question or a second editable bank in provenance records.
 
-One authoritative page owns each explanation. A course links its canonical topics; technical
-questions link to their detailed answers and examples. A personal answer describes actual
-experience, a project task explains that change, and an IT topic teaches the general mechanism.
-Keep these roles connected without duplicating the complete answer in every location.
+## Clean Markdown
 
-## Style and question preservation
+Use one H1, short distinct Russian display names, meaningful H2/H3 sections and moderate emoji.
+Keep source paths in snake_case. `{{title}}` is the only supported substitution. Empty semantic
+sections are allowed in a source form or an explicitly requested structural skeleton; omit unused
+sections in finished material. A fixture, skeleton or generated file is not a completed lesson.
 
-Use one H1, short H2/H3 headings, moderate emoji and a return link to the nearest index.
-Keep source details in HTML comments, including relevant versions and real verification dates.
-Questions and all source variants remain visible; hiding sources never means deleting them.
-Keep existing source markers, IDs and versions beside migrated questions. A new blank template
-does not need a fabricated source ID. Preserve original wording in the migration map if a display
-wording is clarified, and map every source question to its canonical answer.
+Installable forms contain no technical YAML/frontmatter, HTML/Obsidian maintenance comments,
+hidden IDs, cssclasses, agent logs, TODOs, fake URLs or author prompts such as “вставить ссылку”.
+Keep filling instructions in guides and technical identity outside reader notes. Useful sources,
+substantive technology versions, dates that affect the explanation, assumptions and limitations
+belong visibly in the content when known. Preserve original questions and variants; technical
+source IDs/versions go into the external mapping rather than hidden note comments.
 
-The technical bank retains four columns: `Вопрос`, `Короткий ответ`, `Развёрнутый ответ`,
-`Типичные ошибки`. Long explanations, runnable examples and detailed errors live in the linked
-topic, using stable headings or anchors. Keep links specific enough to find the answer.
-Project follow-up questions retain a separate `Вопрос / Ответ` table next to the relevant task;
-the project interview page links to those owners. Personal experience answers have one owner
-under personal interview preparation. Do not create one file per question by default.
+No “Быстрый вход”, return menus, breadcrumbs or previous/course/next bars. Navigation belongs to
+the consumer interface. Preserve meaningful question–topic and experience–project links.
+Do not impose dates, summaries, goals or a next step on every short note. A full lesson still
+explains definitions, assumptions, mechanisms, alternatives, examples, limits and errors in a
+connected order; minimal forms do not justify reducing it to a FAQ.
 
-Progress belongs to the nearest index only. Self-checks describe actions and observable criteria,
-not a second checkbox database. Preserve existing checkboxes and never mark a generated note,
-notebook or course as learned or verified just because its file exists.
+## Programs, questions and progress
 
-## Complete courses and notes
+A program has sections with tables `№ | Тема`; a row places `[ ]` or `[x]` beside a short topic
+link. Use 1, 2, …, 10 without leading zeros, with numeric order across sections. Do not depend on
+lexicographic filename sorting or place technical row IDs in the note. The nearest program/index
+owns the only progress mark. Creation, opening, question linkage and reading an answer never
+mark a topic learned. A finished note does not repeat a second progress checklist.
 
-A course states its audience, outcomes, prerequisites and entry diagnosis; orders modules by
-dependency; links complete canonical theory and worked examples; supplies independent practice,
-checkpoints and a final project with acceptance criteria. A list of technology names or links
-alone is not a completed course. A module can be a section in the course; add a separate module
-page only when its real volume or navigation requires it.
+Technical banks retain `Вопрос | Короткий ответ | Развёрнутый ответ | Типичные ошибки` and visible
+original wording/variants. A link to a future topic is a topic relationship, not an existing full
+answer. An empty topic cannot prove answer completeness or human mastery. Project follow-ups
+use `Вопрос | Ответ` when needed; personal interview answers describe actual experience.
 
-A full topic explains definitions, assumptions, causal mechanisms, alternatives and limits in a
-connected order. Include a minimal example, a substantive scenario and a boundary or counterexample,
-then common errors, visible questions, independent practice and criteria for self-checking.
-Short interview answers remain in the bank; they do not replace the explanatory note.
-Do not inflate length with repeated summaries or generic headings lacking useful content.
+Self-check follows the full condition and success criterion → independent attempt → optional hint
+→ separate explanation → another attempt → human progress mark in the program. Keep essential
+input visible before hints and separate a first hint from a full solution. No fixed task/hint
+quota, score log or identical long questionnaire for every topic.
 
-University forms follow the actual subject and assignment. Preserve mathematical notation,
-units, conditions and source requirements. Laboratories distinguish actual measurements,
-program execution and calculated or modelled results. Exam preparation organizes existing
-subject questions; it neither copies the IT bank nor revives the old duplicate exam-bank path.
+## Domain contracts
 
-For work history, explain missing mechanisms with a clearly labelled teaching model, and ask
-specific questions for unknown historical facts. A model, a plausible parameter or a suggested
-design never becomes a claim about the user's past work. Preserve metric types, scope and units.
-Material cards hold a short purpose and `вставить ссылку`, not copied contracts or legal records. Verify the target URL and the intended readers’ existing access before adding an attachment or link. Do not expand sharing permissions implicitly.
+IT forms support a coherent technology course from necessary foundations to advanced mechanisms,
+ordered by dependencies for an experienced reader revising before interviews. Question coverage
+does not bound the syllabus. Avoid motivational filler and repeating an entire profession.
+In structural mode prepare only the program, empty lesson skeletons and relationships to existing
+questions; do not fill theory, answers, code, tasks, hints or solutions, invent a book/edition,
+mark answers complete or set `confirmed: true`. This repository supplies generic forms and rules,
+not any concrete course, lesson files or user's questions.
 
-University reports preserve actual measurements and uncertainty estimates. Printed graphs use a 5 mm square grid at 100% print scale, with scale below the plot and axis labels including units; calculated models are identified separately.
+University work uses only actual programs, lectures, conditions, assignments and examinations.
+Never invent exercises, variants, tickets, measurements, teacher requirements or training tasks
+to fill a gap. Preserve original numbers, units, formulas and their applicability conditions.
+Distinguish actual measurements, calculated values, models and executed program results.
+Printed laboratory graphs retain a 5 mm square grid at 100% print scale, a scale below the plot
+and axes with units. Self-check uses available real source questions without a mandatory questionnaire.
 
-## Browser practice and notebooks
+A profile is a short introduction; experience owns factual roles/responsibility; a project owns
+its task, structure, personal contribution and evidenced outcome. Do not fabricate biography,
+metrics or achievements. Unknown causes and historical facts can stay unknown. A teaching model
+must be labelled separately and never becomes a historical claim. Material links point to one
+native master with verified intended access; never broaden permissions to make a link work.
 
-Learning practice opens through a verified browser URL to a prepared notebook, SQL environment
-or service environment. Local editors and package installation are not required steps in this
-learning flow. A browser interface does not by itself provide PostgreSQL, a broker or an HTTP
-server: supply a working environment or label a demonstration as a simulation. Never claim that
-an unavailable integration was tested. Executable code has one owner, normally its notebook.
+## Consumer installation and identity
 
-The [notebook template](../templates/notebooks/python_practice.ipynb) separates a worked
-demonstration, an independent exercise, checks, visible questions and the actual outcome.
-Its unfinished exercise and empty test cases intentionally cannot report success.
-After filling it, restart the kernel and run cells in order in the chosen browser environment;
-record actual results and limitations. Source comments remain hidden in rendered Markdown.
-Do not store secrets or personal data in cells or outputs.
+Install only manifest `kind: markdown` entries, preserving category paths. Exclude README, guides,
+fixtures, notebook and repository metadata from the Markdown picker. Keep the current manifest
+schema and compatible IDs; display name, path, kind and identity are different fields.
+Record the reviewed human-readable `v<version>` tag and its resolved full commit, source/installed
+paths, hashes and explicit transformations outside the notes. Never invent a future SHA or
+substitute a floating branch for immutable provenance. Source IDs preserve relationships, not
+another editable copy of all content. Notebook cell IDs/format metadata have a separate contract.
 
-## Installation and migration
+Before separately authorized consumer changes, inspect its actual policy, project.json, plugin
+code and supported syntax. Do not promise recursive selection, display labels or automatic
+navigation from a version number. Preserve local overrides, filled content, links, attachments,
+progress, source questions, permissions, Canvas and bookmarks. Back up and map paths first;
+never replace filled notes with empty forms or mirror-delete cloud objects.
+The [compatibility map](template-compatibility.md) describes changes without executing migration.
 
-Install only manifest entries whose kind is `markdown` into the existing managed subtree,
-preserving category paths. Do not put README files, the manifest, the notebook or the public
-repository itself into the Markdown picker. Record the reviewed full upstream commit,
-source and installed paths, hashes, category labels and explicit path-only transformations
-in private provenance. Do not invent a future commit hash or silently overwrite local edits.
+## Interactive marks and browser practice
 
-The nearest project.json selects home, attachments and templates; parent forms are inherited.
-Inspect actual project-scope code before relying on recursive selection, display_name labels or
-automatic return-link insertion. Installed variants can share a version string while differing
-in these features. The supplied Markdown forms use only the supported `{{title}}` variable;
-other bracketed text is an instruction to the author, not a new plugin variable.
+Clickable marks are a future consumer requirement, not a Markdown implementation. Clicking the
+mark changes only `[ ]`/`[x]` in that row; clicking its title opens the topic without changing
+progress. Preserve user edits, detect conflicts, support keyboard access and keep a readable,
+manually editable fallback without extensions. No second status, cssclasses, HTML/JS buttons,
+Dataview or plugin dependency is added. Actual reading, Live Preview, source mode, reopening and
+sync checks belong to a separate consumer task; an HTML preview does not prove them.
 
-The Markdown picker does not create or execute notebooks. Store and open a notebook through
-the agreed browser workflow; validate the actual destination URL. Consolidate similar local
-forms after preserving unique fields and consumers, so one type does not appear as duplicate
-local and managed choices. Keep user note names unless a move is part of the agreed migration.
+Browser practice needs a verified URL to a prepared notebook, SQL or service environment. A
+browser UI alone does not supply a database/server. Label simulations and unavailable integrations
+honestly; do not require local installation in the learning flow. Executable practice has one
+owner, normally its notebook. Unfilled exercises and empty cases must fail honestly, with no
+fabricated outputs or execution claims. A source checker cannot prove learning, factual truth,
+external access, notebook execution or native Obsidian interaction.
 
-Update manifest, catalog, checker/tests, installed picker mappings and provenance together.
-The checker validates the catalog and source contract; it cannot prove factual correctness,
-learning completeness, browser access or Obsidian rendering. After deployment, create disposable
-notes of changed types through the actual installed picker, verify expansion and navigation,
-then remove only those probes. Check browser execution separately from file validation.
+## Shared information and external materials
 
-## Team information and Drive
-
-Shared tasks and goals use repository Issues and an authorized organization Project; versioned
-Git documentation owns shared decisions. Obsidian keeps personal notes and links, not a second
-team backlog. Public rules use GFM; Obsidian syntax stays in note templates and the private vault.
-
-Follow the existing [Drive mapping](../templates/drive/README.md). Verify object IDs and effective
-access before authorized moves; preserve IDs and permissions. Personal content stays private,
-existing university sharing is preserved, and each editable document keeps one master.
-Replacing a note with a link placeholder does not authorize deleting its cloud source.
+Shared tasks use repository Issues and an authorized organization Project; Git owns shared
+decisions. Personal notes are not a duplicate team backlog. Public rules use GFM; Obsidian syntax
+stays in note forms and the consumer vault. Follow the [Drive guide](../templates/drive/README.md)
+only in a separately authorized task. Preserve existing object IDs, sharing and one editable
+master; a note link never authorizes moving or deleting its source. No vault, Drive or plugin is
+changed by this repository refactoring.

@@ -7,8 +7,8 @@
   },
   "scripts": {
     "check": "npm run check:markdown && npm run check:links && npm run check:templates",
-    "check:markdown": "markdownlint \"**/*.md\" --dot --ignore node_modules --ignore coverage",
-    "check:links": "find . \\( -path ./node_modules -o -path ./coverage -o -path ./.git \\) -prune -o -name \"*.md\" -type f -print0 | xargs -0 -r -n1 markdown-link-check --config .markdown-link-check.json --quiet",
+    "check:markdown": "markdownlint \"**/*.md\" --dot --ignore node_modules --ignore coverage --ignore .serena --ignore .aws --ignore .agents --ignore .codex",
+    "check:links": "find . \\( -path ./node_modules -o -path ./coverage -o -path ./.git -o -path ./.serena -o -path ./.aws -o -path ./.agents -o -path ./.codex \\) -prune -o -name \"*.md\" -type f -print0 | xargs -0 -r -n1 markdown-link-check --config .markdown-link-check.json --quiet",
     "check:templates": "node scripts/check-templates.mjs",
     "test": "node --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=coverage/junit.xml --test-reporter=lcov --test-reporter-destination=coverage/lcov.info scripts/*.test.mjs",
     "version:show": "node scripts/release.mjs version",

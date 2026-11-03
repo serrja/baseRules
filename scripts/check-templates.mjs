@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
+import { dirname, isAbsolute, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const technicalHeader = "| Вопрос | Короткий ответ | Развёрнутый ответ | Типичные ошибки |";
@@ -24,6 +24,122 @@ function cellText(cell) {
   return Array.isArray(cell.source) ? cell.source.join("") : cell.source;
 }
 
+export function renderMarkdown(text, title = "Техническая фикстура") {
+  assert.ok(!/\{\{(?!title\}\})/.test(text), "Unsupported template variable");
+  return text.replaceAll("{{title}}", title);
+}
+
+// Source forms contain no filled examples; guides and format-specific notebook metadata are separate.
+export function checkMarkdownForm(text, path = "form") {
+  assert.equal((text.match(/^# /gm) ?? []).length, 1, `${path}: keep one H1`);
+  assert.ok(text.startsWith("# {{title}}\n"), `${path}: supported title expansion required`);
+  assert.ok(!/\{\{(?!title\}\})/.test(text), `${path}: unsupported template variable`);
+  assert.ok(!/^---\s*$/m.test(text), `${path}: no technical frontmatter`);
+  assert.ok(!/<!--|%%/.test(text), `${path}: no maintenance comments`);
+  assert.ok(!/(?:cssclasses|template_id|source_id|confirmed)\s*:/i.test(text), `${path}: keep technical identity outside notes`);
+  assert.ok(!/(?:TODO|встав(?:ить|ьте)|укажите|заполните|\[(?:название|описание|ссылка)[^\]]*\])/i.test(text), `${path}: author prompts belong in guides`);
+  assert.ok(!/(?:Возврат:|Быстрый вход|Предыдущ(?:ая|ий)\s*(?:\/|\|)|Курс\s*\/\s*Следующ|(?:Главная|Оглавление)\s*[›»>])/i.test(text), `${path}: no return menus`);
+  assert.ok(!/https?:\/\/(?:drive|docs)\.google\.com/i.test(text), `${path}: no private cloud IDs`);
+  assert.ok(!/https?:\/\/(?:example\.(?:com|org|net)|[^/\s]+\.invalid)(?:[\/\s]|$)/i.test(text), `${path}: no fake URLs`);
+  return renderMarkdown(text);
+}
+
+function sourceFile(root, path) {
+  const base = realpathSync(root);
+  const candidate = resolve(base, path);
+  const rel = relative(base, candidate);
+  assert.ok(rel && !rel.startsWith("..") && !isAbsolute(rel), "Source path must stay inside root");
+  const actual = realpathSync(candidate);
+  assert.equal(actual, candidate, "Source symlinks are not managed forms");
+  assert.ok(statSync(actual).isFile(), "Managed source must be a file");
+  return actual;
+}
+
+export function catalogTable(manifest) {
+  return ["| Категория | Форма | Вид |", "| --- | --- | --- |", ...manifest.templates.map((entry) => {
+    const link = entry.kind === "markdown" ? entry.path.replace(/^obsidian\//, "") : `../${entry.path}`;
+    return `| ${manifest.categories[entry.category]} | [${entry.display_name}](${link}) | ${entry.kind} |`;
+  })].join("\n");
+}
+
+export function checkProgram(text) {
+  const rows = [];
+  let section = false;
+  let headerFound = false;
+  for (const line of text.split("\n")) {
+    if (/^#{1,2}(?:\s|$)/.test(line)) section = false;
+    const heading = line.match(/^###(?:\s+(.*))?$/);
+    if (heading) section = /[\p{L}\p{N}]/u.test(heading[1] ?? "");
+    if (!line.startsWith("|")) continue;
+    const cells = line.split("|").slice(1, -1).map((cell) => cell.trim());
+    assert.equal(cells.length, 2, "Program has exactly two columns");
+    assert.ok(section, "Program tables belong to sections");
+    if (cells[0] === "№" && cells[1] === "Тема") {
+      headerFound = true;
+      continue;
+    }
+    if (/^[-: ]+$/.test(cells[0])) continue;
+    assert.match(cells[0], /^[1-9]\d*$/, "Program numbers have no leading zero");
+    assert.equal(Number(cells[0]), rows.length + 1, "Program order must be numeric and continuous");
+    assert.match(cells[1], /^\[[ x]\] \[[^\]]+\]\([^)]+\)$/, "One progress mark beside a topic link required");
+    rows.push({ number: Number(cells[0]), topic: cells[1].replace(/^\[[ x]\] /, ""), learned: cells[1].startsWith("[x]") });
+  }
+  assert.ok(headerFound, "Program needs №/Тема columns");
+  assert.equal((text.match(/\[[ x]\]/g) ?? []).length, rows.length, "Progress has one owner in program rows");
+  return rows;
+}
+
+// A structural non-emptiness check, not a judgment of explanation quality.
+function hasAnswerContent(text) {
+  const lines = text.replace(/<!--[\s\S]*?-->/g, "").replaceAll("{{title}}", "").split("\n");
+  const cells = (line) => line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim());
+  const separator = (cell) => /^:?-{3,}:?$/.test(cell);
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index].trim();
+    if (!line || /^#{1,6}(?:\s|$)/.test(line) || /^(?:```|~~~)/.test(line)) continue;
+    const row = cells(line);
+    const next = cells(lines[index + 1] ?? "");
+    if (line.includes("|") && (lines[index + 1] ?? "").includes("|") && row.length === next.length && next.every(separator)) {
+      index++; // Header and delimiter do not establish that a table contains data.
+      continue;
+    }
+    const remainder = line
+      .replace(/^(?:>\s*)+/, "")
+      .replace(/^(?:[-+*]|\d+[.)])\s+/, "")
+      .replace(/!?\[[^\]]*\]\([^)]+\)/g, "")
+      .replace(/\[\[[^\]]+\]\]/g, "")
+      .replace(/https?:\/\/\S+/g, "");
+    if (/[\p{L}\p{N}]/u.test(remainder)) return true;
+  }
+  return false;
+}
+
+export function checkQuestionBank(text, root, bankPath) {
+  assert.ok(text.includes(technicalHeader), "Keep the four-column technical question contract");
+  const rows = text.split("\n").filter((line) => line.startsWith("|"));
+  assert.ok(rows.every((line) => line.split("|").length === 6), "Technical questions keep exactly four columns");
+  for (const row of rows.slice(2)) {
+    const cells = row.split("|").slice(1, -1).map((cell) => cell.trim());
+    assert.ok(cells[0], "Question wording must remain visible");
+    if (!cells[2]) continue;
+    const link = cells[2].match(/^\[[^\]]+\]\(([^)]+)\)$/);
+    assert.ok(link, "Detailed answer must link to its canonical explanation");
+    const [target, anchor] = link[1].split("#");
+    const actual = sourceFile(root, resolve(root, dirname(bankPath), target));
+    let answer = readFileSync(actual, "utf8");
+    if (anchor) {
+      const lines = answer.split("\n");
+      const index = lines.findIndex((line) => line.startsWith("#") && line.replace(/^#+\s+/, "").toLowerCase().replace(/[^\p{L}\p{N} -]/gu, "").replace(/ /g, "-") === decodeURIComponent(anchor));
+      assert.ok(index >= 0, "Answer heading missing");
+      const depth = lines[index].match(/^#+/)[0].length;
+      const end = lines.findIndex((line, i) => i > index && new RegExp(`^#{1,${depth}} `).test(line));
+      answer = lines.slice(index + 1, end < 0 ? undefined : end).join("\n");
+    }
+    assert.ok(hasAnswerContent(answer), "Empty topic is a relationship, not a detailed answer");
+  }
+  return rows.length - 2;
+}
+
 export function checkTemplates(root = "templates") {
   const manifest = readJson(`${root}/manifest.json`);
   assert.equal(manifest.schema_version, 1, "Unsupported template manifest schema");
@@ -35,51 +151,38 @@ export function checkTemplates(root = "templates") {
   assert.equal(new Set(ids).size, ids.length, "Duplicate template ID");
   assert.deepEqual(managedPaths(root), paths.slice().sort(), "Keep only reviewed manifest paths; no accidental picker entries");
   const catalog = readFileSync(`${root}/obsidian/README.md`, "utf8");
+  const table = catalog.split("## Формы\n")[1]?.split("\n## Использование")[0]?.trim();
+  assert.equal(table, catalogTable(manifest), "Catalog table must derive exactly from manifest");
 
   for (const entry of manifest.templates) {
-    assert.ok(typeof entry.id === "string" && entry.id.length, "Template ID required");
-    assert.ok(typeof entry.display_name === "string" && entry.display_name.trim(), "Russian display name required");
+    assert.match(entry.id, /^[a-z_]+\.[a-z_]+$/, "Stable template ID required");
+    assert.ok(typeof entry.display_name === "string" && entry.display_name.trim() && !/[\n|<>]/.test(entry.display_name), "Russian display name required");
     assert.ok(Object.hasOwn(manifest.categories, entry.category), "Unknown template category");
     const path = entry.path;
     assert.ok(/^(?:obsidian\/[a-z_]+\/[a-z_]+\.md|notebooks\/[a-z_]+\.ipynb)$/.test(path), "Portable source path required");
+    assert.ok(!/(?:^|\/)(?:readme|guide|fixture|report)\./i.test(path), "Guides, fixtures and reports are not picker forms");
     const link = entry.kind === "markdown" ? path.replace(/^obsidian\//, "") : `../${path}`;
     assert.ok(catalog.includes(`](${link})`), `${path}: catalog link missing`);
-    const text = readFileSync(`${root}/${path}`, "utf8");
-    assert.ok(!/https?:\/\/(?:drive|docs)\.google\.com/.test(text), `${path}: no private cloud IDs`);
+    const text = readFileSync(sourceFile(root, path), "utf8");
+    assert.ok(!/https?:\/\/(?:drive|docs)\.google\.com/i.test(text), `${path}: no private cloud IDs`);
     assert.ok(!localSetup.test(text), `${path}: browser practice must not require local setup`);
 
     if (entry.kind === "markdown") {
       assert.equal(path.split("/")[1], entry.category, `${path}: category/path mismatch`);
-      assert.equal((text.match(/^# /gm) ?? []).length, 1, `${path}: keep one H1`);
-      assert.ok(text.includes("# {{title}}\n"), `${path}: supported title expansion required`);
-      assert.ok(!/\{\{(?!title\}\})/.test(text), `${path}: unsupported template variable`);
-      assert.ok(text.includes("Возврат:"), `${path}: return-link prompt required`);
-      assert.ok(!text.includes("[["), `${path}: no fixed private vault paths`);
-      assert.ok(text.includes("<!-- Источники"), `${path}: preserve hidden sources`);
-      const visible = text.replace(/<!--[\s\S]*?-->/g, "");
-      assert.ok(!/^#{1,6}[^\n]*(?:Источники|Основания)\s*$/m.test(visible), `${path}: source details stay hidden`);
-      if (path !== "obsidian/common/navigation.md") {
-        assert.ok(!/^- \[[ xX]\]/m.test(visible), `${path}: do not duplicate progress checkboxes`);
-      }
+      const visible = checkMarkdownForm(text, path);
+      assert.ok(!/\[[ xX]\]/.test(text), `${path}: source skeleton cannot contain progress states`);
       if (path === "obsidian/it/technical_questions.md") {
-        assert.ok(visible.includes(technicalHeader), "Keep the four-column technical question contract");
-        const rows = visible.split("\n").filter((line) => line.startsWith("|"));
-        assert.equal(rows.length, 3, "Question template contains one example row, not a filled bank");
-        assert.ok(rows.every((line) => line.split("|").length === 6), "Technical questions keep exactly four columns");
-        assert.ok(visible.includes("[Полная формулировка; все исходные варианты]"), "Question and variants must remain visible");
+        assert.equal(checkQuestionBank(text, root, path), 0, "Source bank must not fabricate questions");
       }
       if (["obsidian/work/task.md", "obsidian/work/interview.md"].includes(path)) {
         assert.ok(visible.includes(projectHeader), "Keep separate two-column project follow-up questions");
         assert.ok(!visible.includes(technicalHeader), "Project follow-ups do not duplicate the technical bank");
       }
-      if (path === "obsidian/it/course.md") {
-        for (const heading of ["Цель и итоговые умения", "Необходимые знания и входная проверка", "Программа по модулям",
-          "Практика в браузере", "Вопросы курса", "Контрольные точки", "Итоговый проект", "Итоговая проверка и дальнейший маршрут"]) {
-          assert.ok(visible.includes(heading), `Course contract missing: ${heading}`);
-        }
+      if (["obsidian/it/course.md", "obsidian/university/subject.md"].includes(path)) {
+        assert.equal(checkProgram(text).length, 0, "Source course must not contain a concrete program");
       }
       if (path === "obsidian/it/topic.md") {
-        for (const heading of ["Понятия и модель", "Как это работает", "Разобранные примеры", "Типичные ошибки и ограничения", "Самопроверка"]) {
+        for (const heading of ["Понятия и основы", "Механизм", "Примеры", "Ограничения и ошибки", "Самопроверка", "Связанные вопросы"]) {
           assert.ok(visible.includes(heading), `Full topic contract missing: ${heading}`);
         }
       }
@@ -87,6 +190,7 @@ export function checkTemplates(root = "templates") {
       assert.equal(entry.kind, "notebook", "Unknown template kind");
       const notebook = JSON.parse(text);
       assert.equal(notebook.nbformat, 4, "Notebook format 4 required");
+      assert.equal(notebook.nbformat_minor, 5, "Keep the reviewed notebook format revision");
       assert.equal(notebook.metadata?.base_rules?.kind, "unfilled_template", "Notebook must identify itself as an unfinished template");
       assert.equal(notebook.metadata?.base_rules?.execution_status, "not_run", "Template cannot claim execution");
       assert.equal(notebook.metadata?.base_rules?.browser_only, true, "Browser notebook contract required");
@@ -94,6 +198,8 @@ export function checkTemplates(root = "templates") {
       assert.equal(new Set(notebook.cells.map((cell) => cell.id)).size, notebook.cells.length, "Notebook cell IDs must be unique");
       for (const cell of notebook.cells) {
         cellText(cell);
+        assert.match(cell.id, /^[a-zA-Z0-9_-]{1,64}$/, "Valid notebook cell ID required");
+        assert.ok(["code", "markdown"].includes(cell.cell_type), "Reviewed notebook cell type required");
         if (cell.cell_type === "code") {
           assert.equal(cell.execution_count, null, "Blank notebook has no executed cells");
           assert.deepEqual(cell.outputs, [], "Blank notebook must not contain fabricated outputs");
@@ -102,13 +208,15 @@ export function checkTemplates(root = "templates") {
       const code = notebook.cells.filter((cell) => cell.cell_type === "code").map(cellText).join("\n");
       const visible = notebook.cells.filter((cell) => cell.cell_type === "markdown").map(cellText).join("\n")
         .replace(/<!--[\s\S]*?-->/g, "");
-      assert.ok(code.includes("NotImplementedError"), "Unfinished exercise must be explicit");
-      assert.ok(/assert\s+test_cases\b/.test(code), "Empty test cases must not report success");
+      assert.ok(!/<!--|%%|встав(?:ить|ьте)|\[название\]/i.test(notebook.cells.filter((cell) => cell.cell_type === "markdown").map(cellText).join("\n")), "Notebook instructions belong in its guide");
+      assert.match(code, /^    raise NotImplementedError\(/m, "Unfinished exercise must be explicit");
+      assert.ok(/^assert\s+test_cases\b/m.test(code), "Empty test cases must not report success");
       for (const title of ["Демонстрация", "Самостоятельное задание", "Проверки", "Вопросы после выполнения", "Фактический итог"]) {
         assert.ok(visible.includes(title), `Notebook section missing: ${title}`);
       }
     }
   }
+  checkMarkdownForm(readFileSync(sourceFile(root, "drive/work_project.md"), "utf8"), "drive/work_project.md");
   return paths.slice().sort();
 }
 

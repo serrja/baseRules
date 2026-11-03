@@ -1,6 +1,7 @@
 # Drive organization
 
-Keep the existing root and its access boundaries. The four knowledge categories describe purpose;
+This guide describes a future, separately authorized external task. The repository refactoring
+does not access or change Drive. Keep the existing root and its access boundaries. The four knowledge categories describe purpose;
 they do not require identical physical parents in Obsidian and Drive.
 
 ```text
@@ -32,4 +33,5 @@ compare source and destination permissions first; defer the move if access would
 
 A new document based on a template is a new working document with its own purpose, not a second
 editable copy of an existing document. Keep one native Docs master and link it from the note.
-Use the [work project outline](work_project.md) only when a real project needs documents.
+Use the clean [work project outline](work_project.md) only when a real project needs documents;
+[the author guide](../../docs/template-guides/personal-work.md) owns filling instructions.

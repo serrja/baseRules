@@ -1,12 +1,12 @@
 # 📚 Base rules
 
-Portable engineering norms, 24 Russian Markdown templates and one browser notebook template.
+Portable engineering norms, Russian Markdown forms and an unfinished browser notebook template.
+The manifest owns the current catalog; author instructions live outside the installable forms.
 This repository owns shared policy and reusable forms; filled personal notes and code projects stay with their owners.
 
 ```bash
 make help
-make version
-make ci-local
+make lint
 ```
 
 [Development](docs/development.md) · [Versioning](docs/versioning.md) · [Releases](docs/releases.md) · [Changelog](CHANGELOG.md)
@@ -30,6 +30,8 @@ make ci-local
 | Work | Project, architecture, task, project interview and material link |
 
 Use the [catalog](templates/obsidian/README.md) and [manifest](templates/manifest.json) to choose a form.
+[Author guides](docs/template-guides/README.md), [compatibility](docs/template-compatibility.md) and
+[installation](docs/template-installation.md) describe the separate roles and future consumer work.
 The [notebook](templates/notebooks/python_practice.ipynb) is an unfinished practice template, not a completed exercise.
 The [Drive guide](templates/drive/README.md) organizes existing linked documents without creating a second master.
 

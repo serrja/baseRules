@@ -14,9 +14,11 @@ RECEIPT_COMMAND = $(QUALITY_RUN) node scripts/release.mjs
 BUILD_COMMAND = $(QUALITY_RUN) npm run build
 VERIFY_COMMAND = $(QUALITY_RUN) npm run verify
 IMAGE_COMMAND = printf '%s\n' 'notApplicable: rules have no runtime image'
-QUALITY_EXTRA_TARGETS += acceptance
 CI_LOCAL_TARGETS ?= acceptance coverage build verify release-check
 include docker/quality.mk
+# Local owner override: acceptance needs the managed test lifecycle and its source/image receipts.
+acceptance: QUALITY_TEST := acceptance
+acceptance: test
 else
 .DEFAULT_GOAL := help
 .PHONY: help check test lint typecheck build verify
@@ -45,6 +47,7 @@ endif
 .PHONY: dev-policy-help
 help: dev-policy-help
 dev-policy-help:
-	@printf '%s\n' 'Daily: make lint; explicit git push origin dev.' \
+	@printf '%s\n' 'Daily: one temporary working branch; make lint; authorized push of that exact branch.' \
+	  'Promotion requires separate authorization: working branch -> test -> dev -> main.' \
 	  'Manual only: test, typecheck, coverage, build, acceptance, ci-local.' \
 	  'Native lint tools must be installed; lint never syncs/builds the application.'

@@ -10,6 +10,7 @@ const readJson = (path) => JSON.parse(readFileSync(path, "utf8"));
 const writeJson = (path, value) => writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
 const digest = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
 const commandOutput = (command, args) => execFileSync(command, args, { encoding: "utf8" }).trim();
+const mandatoryChecks = ["acceptance", "coverage", "build", "verify", "release-check"];
 const source = () => {
   const value = readJson("coverage/source.json");
   assert.match(value.commit, /^[a-f0-9]{40,64}$/);
@@ -98,7 +99,13 @@ export function coverage() {
 export function receipt(action, args) {
   const path = "coverage/ci-local.json";
   if (action === "init") {
-    writeJson(path, { schemaVersion: 1, source: source(), startedAt: new Date().toISOString(), status: "running", checks: [], artifacts: [], tools: { node: process.version, npm: commandOutput("npm", ["--version"]) } });
+    const plan = readJson("coverage/ci-plan.json");
+    assert.ok(["full", "scoped"].includes(plan.scope), "Invalid CI scope");
+    assert.ok(Array.isArray(plan.checks) && plan.checks.length > 0, "Empty CI plan");
+    assert.ok(plan.checks.every((name) => typeof name === "string" && /^[a-zA-Z0-9_.:-]+$/.test(name)), "Invalid CI check");
+    assert.equal(new Set(plan.checks).size, plan.checks.length, "Duplicate CI plan check");
+    if (plan.scope === "full") assert.deepEqual(plan.checks, mandatoryChecks, "Incomplete mandatory plan");
+    writeJson(path, { schemaVersion: 1, scope: plan.scope, plannedChecks: plan.checks, source: source(), startedAt: new Date().toISOString(), status: "running", checks: [], artifacts: [], tools: { node: process.version, npm: commandOutput("npm", ["--version"]) } });
     return;
   }
   const report = readJson(path);
@@ -116,8 +123,9 @@ export function receipt(action, args) {
     if (report.source.contentSha256 !== source().contentSha256) report.status = "failed";
     if (report.status === "passed") {
       assert.ok(report.checks.every((check) => check.status === "passed"));
-      assert.deepEqual(report.checks.filter((check) => check.name !== "offline-preflight").map((check) => check.name), ["check", "coverage", "build", "verify", "release-check"], "Incomplete mandatory checks");
-      report.artifacts = [bundle()];
+      assert.deepEqual(report.checks.filter((check) => check.name !== "offline-preflight").map((check) => check.name), report.plannedChecks, "Incomplete planned checks");
+      if (report.scope === "full") assert.deepEqual(report.plannedChecks, mandatoryChecks, "Incomplete mandatory checks");
+      report.artifacts = report.plannedChecks.includes("build") ? [bundle()] : [];
     }
     report.finishedAt = new Date().toISOString();
     writeFileSync("coverage/ci-local-summary.md", `# Local CI\n\nStatus: ${report.status}\n\nSource: ${report.source.commit}; dirty: ${report.source.dirty}; content SHA256: ${report.source.contentSha256}\n\n| Check | Command | Status | Exit |\n| --- | --- | --- | --- |\n${report.checks.map((check) => `| ${check.name} | \`${check.command}\` | ${check.status} | ${check.exitCode} |`).join("\n")}\n`);
