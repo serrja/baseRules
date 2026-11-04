@@ -49,6 +49,11 @@ lexicographic filename sorting or place technical row IDs in the note. The neare
 owns the only progress mark. Creation, opening, question linkage and reading an answer never
 mark a topic learned. A finished note does not repeat a second progress checklist.
 
+A direction groups links to canonical course programs or lessons. Its manually filled tables
+use the same section and numbering structure with links only, leaving marks with their existing
+owner. Any derived progress display needs a separately implemented consumer; the blank direction
+form supplies neither generation nor synchronization. Reuse `it.topic` for lessons in any direction.
+
 Technical banks retain `Вопрос | Короткий ответ | Развёрнутый ответ | Типичные ошибки` and visible
 original wording/variants. A link to a future topic is a topic relationship, not an existing full
 answer. An empty topic cannot prove answer completeness or human mastery. Project follow-ups

@@ -113,6 +113,25 @@ test("IT forms are clean skeletons without made-up content or learned states", (
   assert.equal(checkQuestionBank(readFileSync("templates/obsidian/it/technical_questions.md", "utf8"), "templates", "obsidian/it/technical_questions.md"), 0);
 });
 
+test("direction is an empty catalog form and uses the existing lesson form", () => {
+  const entries = JSON.parse(readFileSync("templates/manifest.json", "utf8")).templates;
+  assert.equal(entries.find((entry) => entry.id === "it.direction").path, "obsidian/it/direction.md");
+  assert.equal(entries.filter((entry) => entry.id === "it.topic").length, 1);
+  const text = readFileSync("templates/obsidian/it/direction.md", "utf8");
+  checkMarkdownForm(text);
+  assert.deepEqual(checkProgram(text), []);
+  assert.ok(!/\[\[|\]\(/.test(text), "No preselected courses or topics in the source form");
+});
+
+test("direction rejects filled content, progress and author instructions in the source", () => {
+  for (const extra of ["Готовое содержание фикстуры.", "| 1 | [Тема A](topic.md) |", "| 1 | [ ] [Тема A](topic.md) |", "Заполните программу", "<!-- lesson_id: fixture -->"]) {
+    withTemplates((root) => {
+      change(root, "obsidian/it/direction.md", (text) => text + `\n${extra}\n`);
+      assert.throws(() => checkTemplates(root), /empty sections|progress|mark|author prompts|maintenance comments/);
+    });
+  }
+});
+
 test("IT fixture keeps numeric 1 through 10 across sections with one progress owner", () => {
   const header = "| № | Тема |\n| --- | --- |\n";
   const group = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => `| ${start + i} | [ ] [Фикстура ${start + i}](fixture_${start + i}.md) |`).join("\n");
@@ -408,8 +427,8 @@ test("R1 preserves canonical links, wording, anchors and root isolation", () => 
   });
 });
 
-test("R2 accepts empty course and subject section tables", () => {
-  for (const path of ["templates/obsidian/it/course.md", "templates/obsidian/university/subject.md"]) {
+test("R2 accepts empty direction, course and subject section tables", () => {
+  for (const path of ["templates/obsidian/it/direction.md", "templates/obsidian/it/course.md", "templates/obsidian/university/subject.md"]) {
     assert.deepEqual(checkProgram(readFileSync(path, "utf8")), []);
   }
 });
@@ -429,8 +448,8 @@ test("R2 rejects empty program tables without their own meaningful section", asy
   }
 });
 
-test("R2 catalog rejects removed sections in empty course and subject forms", () => {
-  for (const path of ["obsidian/it/course.md", "obsidian/university/subject.md"]) {
+test("R2 catalog rejects removed sections in empty direction, course and subject forms", () => {
+  for (const path of ["obsidian/it/direction.md", "obsidian/it/course.md", "obsidian/university/subject.md"]) {
     withTemplates((root) => {
       change(root, path, (text) => text.replace("### 📚 Раздел\n\n", ""));
       assert.throws(() => checkTemplates(root), /belong to sections/);

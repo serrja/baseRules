@@ -21,6 +21,7 @@
 | Университет | [Лабораторная работа](university/laboratory.md) | markdown |
 | Университет | [Практика](university/practice.md) | markdown |
 | Университет | [Экзамен](university/exam_preparation.md) | markdown |
+| IT | [Направление](it/direction.md) | markdown |
 | IT | [Курс](it/course.md) | markdown |
 | IT | [Урок](it/topic.md) | markdown |
 | IT | [Технические вопросы](it/technical_questions.md) | markdown |
