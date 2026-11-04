@@ -167,6 +167,31 @@ export function checkTemplates(root = "templates") {
         assert.ok(visible.includes(projectHeader), "Keep separate two-column project follow-up questions");
         assert.ok(!visible.includes(technicalHeader), "Project follow-ups do not duplicate the technical bank");
       }
+      if (["obsidian/personal/experience.md", "obsidian/work/project.md"].includes(path)) {
+        const tokens = Lexer.lex(text).filter((token) => token.type !== "space");
+        const headings = tokens.filter((token) => token.type === "heading" && token.depth === 2);
+        if (path === "obsidian/personal/experience.md") {
+          assert.deepEqual(headings.map((token) => token.text), ["🏢 Компания", "🧭 Опыт"], "Experience keeps company facts separate from its overview");
+          assert.ok(tokens.every((token) => token.type === "heading" || token.type === "table"), "Experience source must stay empty");
+          assert.equal(tokens.filter((token) => token.type === "heading").length, 3, "No predefined companies or roles");
+          const tables = tokens.filter((token) => token.type === "table");
+          assert.equal(tables.length, 1, "Keep one experience overview");
+          assert.equal(tokens.at(-1), tables[0], "Experience overview belongs to the experience section");
+          assert.deepEqual(tables[0].header.map((cell) => cell.text), ["Период", "Роль и ответственность", "Проекты"], "Preserve the experience table contract");
+          assert.equal(tables[0].rows.length, 0, "Experience source must not invent history");
+        } else {
+          assert.deepEqual(headings.map((token) => token.text), ["🏢 Компания", "🎯 Задача и контекст", "⚙️ Устройство", "👤 Роль и личный вклад", "✅ Результат", "📎 Материалы"], "Keep shared project sections and existing anchors once");
+          const start = tokens.findIndex((token) => token.type === "heading" && token.text === "👤 Роль и личный вклад");
+          const end = tokens.findIndex((token, i) => i > start && token.type === "heading" && token.depth <= 2);
+          const role = tokens.slice(start + 1, end);
+          assert.deepEqual(role.map((token) => token.type), ["heading", "list"], "One reusable role block belongs inside the role section");
+          assert.equal(role[0].depth, 3, "Role names are H3 sections");
+          assert.equal(role[0].text, "Роль", "Source role name stays generic");
+          assert.equal(role[1].ordered, false, "Role fields are not a ranked role taxonomy");
+          assert.deepEqual(role[1].items.map((item) => item.text), ["Обязанности:", "Выполненные задачи:", "Личный вклад:", "Технологии:", "Результаты:"], "Each source role keeps five empty responsibility fields");
+          assert.ok(tokens.filter((token) => !role.includes(token)).every((token) => token.type === "heading" && token.depth <= 2), "Shared project source must stay empty outside the role block");
+        }
+      }
       if (["obsidian/it/direction.md", "obsidian/it/course.md", "obsidian/university/subject.md"].includes(path)) {
         assert.equal(checkProgram(text).length, 0, "Source course must not contain a concrete program");
       }

@@ -3,6 +3,7 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, realpathSync, rmSync, sy
 import { tmpdir } from "node:os";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import test from "node:test";
+import { Lexer } from "marked";
 import { catalogTable, checkMarkdownForm, checkProgram, checkQuestionBank, checkTemplates, renderMarkdown } from "./check-templates.mjs";
 
 test("clean form renders only the supported title and allows visible sources and empty sections", () => {
@@ -191,6 +192,60 @@ test("personal and work forms stay clean without biography, fake URLs or duplica
     assert.ok(text.includes("| Вопрос | Ответ |"));
     assert.ok(!text.includes("Короткий ответ"));
   }
+});
+
+test("work source keeps role-specific fields inside one generic role block", () => {
+  for (const field of ["Обязанности", "Выполненные задачи", "Личный вклад", "Технологии", "Результаты"]) {
+    withTemplates((root) => {
+      change(root, "obsidian/work/project.md", (text) => text.replace(`- ${field}:\n`, "") + `\n- ${field}:\n`);
+      assert.throws(() => checkTemplates(root), /five empty responsibility fields/);
+    });
+  }
+  for (const update of [
+    (text) => text.replace("### Роль", "### Категория фикстуры"),
+    (text) => text.replace("- Технологии:", "- Технологии: содержимое фикстуры"),
+    (text) => text.replace("### Роль", "### Роль\n\n### Компания"),
+    (text) => text + "\n## ⚙️ Устройство\n",
+    (text) => text.replace("## 🎯 Задача и контекст", "Общий контекст фикстуры\n\n## 🎯 Задача и контекст"),
+  ]) {
+    withTemplates((root) => {
+      change(root, "obsidian/work/project.md", update);
+      assert.throws(() => checkTemplates(root), /generic|five empty|reusable role block|existing anchors|stay empty/);
+    });
+  }
+});
+
+test("company source preserves the empty experience overview without preselected history", () => {
+  for (const update of [
+    (text) => text.replace("| Проекты |", "| Проект |"),
+    (text) => text + "| Период фикстуры | Ответственность фикстуры | Связь фикстуры |\n",
+    (text) => text.replace("## 🏢 Компания", "## 🏢 Компания\n\nГотовый текст фикстуры."),
+    (text) => text + "\n### Категория фикстуры\n",
+    (text) => text.replace("## 🧭 Опыт\n\n", "") + "\n## 🧭 Опыт\n",
+  ]) {
+    withTemplates((root) => {
+      change(root, "obsidian/personal/experience.md", update);
+      assert.throws(() => checkTemplates(root), /table contract|invent history|stay empty|predefined companies|belongs to/);
+    });
+  }
+});
+
+test("one project can repeat arbitrary role blocks while shared information stays outside", () => {
+  const source = readFileSync("templates/obsidian/work/project.md", "utf8");
+  const start = source.indexOf("### Роль\n");
+  const end = source.indexOf("## ✅ Результат\n");
+  const block = source.slice(start, end);
+  // Structural fixtures only: no employers, professions, projects or fabricated achievements.
+  const names = ["Контур A — фикстура", "Область B / фикстура"];
+  const roles = names.map((name) => block.replace("### Роль\n", `### ${name}\n`)).join("");
+  const text = source.slice(0, start) + roles + source.slice(end);
+  checkMarkdownForm(text);
+  const tokens = Lexer.lex(renderMarkdown(text));
+  assert.deepEqual(tokens.filter((token) => token.type === "heading" && token.depth === 3).map((token) => token.text), names);
+  const lists = tokens.filter((token) => token.type === "list");
+  assert.equal(lists.length, 2);
+  for (const list of lists) assert.deepEqual(list.items.map((item) => item.text), ["Обязанности:", "Выполненные задачи:", "Личный вклад:", "Технологии:", "Результаты:"]);
+  assert.deepEqual(tokens.filter((token) => token.type === "heading" && token.depth === 2).map((token) => token.text), ["🏢 Компания", "🎯 Задача и контекст", "⚙️ Устройство", "👤 Роль и личный вклад", "✅ Результат", "📎 Материалы"]);
 });
 
 test("rejects notebook outputs pretending the blank exercise has run", () => withTemplates((root) => {
