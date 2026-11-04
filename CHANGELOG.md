@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0-dev.2 (candidate)
+
+Work templates support several projects per company and several freely named roles within one
+canonical project. Each role has separate duties, completed tasks, personal contribution,
+technologies and results; shared company/project facts stay with one owner.
+
+The experience/project forms, author guide, compatibility contract and structural checks are
+aligned. Existing template IDs, paths, project headings and the experience table are preserved;
+single-role materials need no mandatory migration. Forms remain empty and contain no concrete
+employers, professions, projects or invented experience. Dependencies are unchanged.
+
 ## 0.3.0-dev.1 (candidate)
 
 Adds the empty reusable `it.direction` form for a user-defined learning direction. Its substantive
