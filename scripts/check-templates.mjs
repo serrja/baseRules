@@ -167,8 +167,12 @@ export function checkTemplates(root = "templates") {
         assert.ok(visible.includes(projectHeader), "Keep separate two-column project follow-up questions");
         assert.ok(!visible.includes(technicalHeader), "Project follow-ups do not duplicate the technical bank");
       }
-      if (["obsidian/it/course.md", "obsidian/university/subject.md"].includes(path)) {
+      if (["obsidian/it/direction.md", "obsidian/it/course.md", "obsidian/university/subject.md"].includes(path)) {
         assert.equal(checkProgram(text).length, 0, "Source course must not contain a concrete program");
+      }
+      if (path === "obsidian/it/direction.md") {
+        assert.ok(text.split("\n").every((line) => !line.trim() || /^#{1,3} /.test(line)
+          || ["| № | Тема |", "| --- | --- |"].includes(line)), "Direction source contains only empty sections and table headers");
       }
       if (path === "obsidian/it/topic.md") {
         for (const heading of ["Понятия и основы", "Механизм", "Примеры", "Ограничения и ошибки", "Самопроверка", "Связанные вопросы"]) {

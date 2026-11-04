@@ -1,9 +1,19 @@
 # Changelog
 
+## 0.3.0-dev.1 (candidate)
+
+Adds the empty reusable `it.direction` form for a user-defined learning direction. Its substantive
+sections and blank route table contain no concrete courses, topics, instructions or progress.
+The existing `it.topic` lesson form remains byte-for-byte unchanged and serves every direction.
+
+The manifest, catalog, author guide and compatibility notes describe the additive form. Template
+checks cover its empty structure and reject filled content, progress and author instructions.
+Filling, consumer installation, route generation and native Obsidian synchronization remain outside
+this source-only prerelease; no user materials or external task results are included.
+
 ## 0.3.0-dev.0 (candidate)
 
-This prerelease candidate is prepared locally; publication and branch promotion require separate
-acceptance and authorization. It is a documented breaking minor before 1.0, not a stable release.
+This prerelease introduced a documented breaking minor before 1.0; it is not a stable release.
 
 The reusable source set now separates clean Markdown forms, author guides, the stable-ID manifest,
 compatibility notes and technical tests. All existing Markdown and notebook IDs/paths are preserved;

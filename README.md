@@ -26,7 +26,7 @@ make lint
 | Common | Navigation, notes, meetings, instructions and technical problems |
 | Personal | Profile, experience, goals, interests and interview answers |
 | University | Subject, full note, laboratory, practice and exam preparation |
-| IT | Full course, full topic, technical questions and browser practice |
+| IT | Direction, full course, full topic, technical questions and browser practice |
 | Work | Project, architecture, task, project interview and material link |
 
 Use the [catalog](templates/obsidian/README.md) and [manifest](templates/manifest.json) to choose a form.

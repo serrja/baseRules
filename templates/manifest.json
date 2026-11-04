@@ -114,6 +114,13 @@
       "display_name": "Экзамен"
     },
     {
+      "id": "it.direction",
+      "path": "obsidian/it/direction.md",
+      "kind": "markdown",
+      "category": "it",
+      "display_name": "Направление"
+    },
+    {
       "id": "it.course",
       "path": "obsidian/it/course.md",
       "kind": "markdown",
