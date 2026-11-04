@@ -81,9 +81,15 @@ Distinguish actual measurements, calculated values, models and executed program 
 Printed laboratory graphs retain a 5 mm square grid at 100% print scale, a scale below the plot
 and axes with units. Self-check uses available real source questions without a mandatory questionnaire.
 
-A profile is a short introduction; experience owns factual roles/responsibility; a project owns
-its task, structure, personal contribution and evidenced outcome. Do not fabricate biography,
-metrics or achievements. Unknown causes and historical facts can stay unknown. A teaching model
+A profile is a short introduction. Experience owns company facts, periods and a linked overview
+of roles/projects; one company can link several projects. Each project has one canonical page
+for its shared context, structure and overall outcome, with any number of role/responsibility
+blocks. Each block owns its duties, completed tasks, personal contribution, technologies and
+evidenced results; role names are free text, not a predefined taxonomy. Link company facts and
+task details to their owners; do not copy shared facts or count the same outcome again per role.
+Existing single-role material remains valid without rewriting or automatic migration.
+Do not fabricate biography, metrics or achievements. Unknown causes and historical facts can
+stay unknown. A teaching model
 must be labelled separately and never becomes a historical claim. Material links point to one
 native master with verified intended access; never broaden permissions to make a link work.
 
