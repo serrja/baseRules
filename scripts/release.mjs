@@ -10,7 +10,7 @@ const readJson = (path) => JSON.parse(readFileSync(path, "utf8"));
 const writeJson = (path, value) => writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
 const digest = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
 const commandOutput = (command, args) => execFileSync(command, args, { encoding: "utf8" }).trim();
-const mandatoryChecks = ["acceptance", "coverage", "build", "verify", "release-check"];
+const mandatoryChecks = ["acceptance", "coverage", "build", "verify", "release-check", "audit:all", "audit:production"];
 const source = () => {
   const value = readJson("coverage/source.json");
   assert.match(value.commit, /^[a-f0-9]{40,64}$/);
@@ -48,6 +48,9 @@ export function bundle(capture = false) {
   assert.equal(packed.version, pkg.version);
   assert.equal(packed.name, pkg.name);
   const members = commandOutput("tar", ["-tzf", path]).split("\n");
+  for (const file of pkg.name === "base-rules-docs" ? [".github/workflows/docs.yml", ".github/engineering-source.json", "docs/policy.md", "docs/releases.md", "templates/manifest.json"] : []) {
+    assert.ok(members.includes(`package/${file}`), `Missing required bundle file: ${file}`);
+  }
   assert.deepEqual(members.sort(), manifest.files.map(({ path }) => `package/${path}`).sort());
   for (const member of members) {
     assert.ok(member.startsWith("package/") && !member.includes(".."), "Invalid bundle member");

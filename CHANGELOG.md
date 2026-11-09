@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Adopt refactor-policy-v3: mandatory native checks, approved naming and documentation profiles.
+- Validate PR promotion routes and release every dev/main push at its exact event SHA.
+- Preserve Russian knowledge forms, template IDs and immutable upstream tooling provenance.
+
 ## 0.3.0-dev.2 (candidate)
 
 Work templates support several projects per company and several freely named roles within one
