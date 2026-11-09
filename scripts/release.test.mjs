@@ -17,7 +17,7 @@ before(() => {
   writeJson("package.json", pkg);
   writeJson("package-lock.json", { name: pkg.name, version: pkg.version, packages: { "": { version: pkg.version } } });
   writeJson("coverage/source.json", source);
-  writeJson("coverage/ci-plan.json", { scope: "full", checks: ["acceptance", "coverage", "build", "verify", "release-check"] });
+  writeJson("coverage/ci-plan.json", { scope: "full", checks: ["acceptance", "coverage", "build", "verify", "release-check", "audit:all", "audit:production"] });
   writeFileSync("README.md", "# Fixture\n\nNo personal data.\n");
 });
 after(() => { process.chdir(original); rmSync(root, { recursive: true, force: true }); });
@@ -73,7 +73,7 @@ test("receipt rejects source mutation and duplicate checks", () => {
 });
 
 test("full receipt follows acceptance plan and rejects a lint-only substitute", () => {
-  const checks = ["acceptance", "coverage", "build", "verify", "release-check"];
+  const checks = ["acceptance", "coverage", "build", "verify", "release-check", "audit:all", "audit:production"];
   writeJson("coverage/ci-plan.json", { scope: "full", checks: ["check", ...checks.slice(1)] });
   assert.throws(() => receipt("init", []), /Incomplete mandatory plan/);
   writeJson("coverage/ci-plan.json", { scope: "full", checks });
@@ -97,5 +97,14 @@ test("scoped receipt preserves its scope and exact ordered checks", () => {
   const report = JSON.parse(readFileSync("coverage/ci-local.json", "utf8"));
   assert.equal(report.scope, "scoped");
   assert.deepEqual(report.artifacts, []);
-  writeJson("coverage/ci-plan.json", { scope: "full", checks: ["acceptance", "coverage", "build", "verify", "release-check"] });
+  writeJson("coverage/ci-plan.json", { scope: "full", checks: ["acceptance", "coverage", "build", "verify", "release-check", "audit:all", "audit:production"] });
+});
+
+test("rules bundle rejects missing workflow and policy entrypoints", () => {
+  const full = { ...pkg, name: "base-rules-docs" };
+  writeJson("package.json", full);
+  writeJson("package-lock.json", { name: full.name, version: full.version, packages: { "": { version: full.version } } });
+  const result = execFileSync("npm", ["pack", "--ignore-scripts", "--offline", "--pack-destination", "coverage/artifacts", "--json"], { encoding: "utf8" });
+  writeFileSync("coverage/pack.json", result);
+  assert.throws(() => bundle(true), /Missing required bundle file/);
 });

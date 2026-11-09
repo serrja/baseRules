@@ -21,10 +21,11 @@ Keep names/types with their owner; avoid a universal constants file.
 
 ## Verification and delivery
 
-The daily dev cycle runs linters only; type checks, packaging, CliRunner and TestClient are
-manual acceptance tools. Tests, invalid
-configuration, corrupt reports and builds fail honestly. Coverage below 100% and changes in
-coverage produce warnings. No fake success, blanket skips or failure suppression.
+The mandatory fast check runs format/lint, applicable type checks and unit/contract tests.
+The full gate adds integration, build and installed-artifact verification for the actual product.
+Documentation checks do not require Docker or databases. Tests, invalid configuration, corrupt
+reports and builds fail honestly. Record coverage baseline, cover defects/critical invariants and
+explain reductions in review; there is no universal 100% threshold. No blanket skips or suppression.
 Cache identity includes actual source/lock/Dockerfile/base/platform/trust inputs; secrets never
 enter cache keys. Promote immutable artifacts without rebuilding at deploy. Keep rollback artifacts.
 Review the full diff, staged paths and secrets before an authorized commit/push/PR/merge.
@@ -33,3 +34,15 @@ Preserve branch protections and check the exact current source, not a previous C
 Shared [development interface](development.md), [version policy](versioning.md) and
 [release procedure](releases.md) define the delivery workflow. Language scaffolds own the native
 implementation; local contracts select applicable checks without imposing one directory tree.
+
+## Contracts and configuration
+
+Use native enums/discriminated unions for closed vocabularies; validate open user input without
+inventing enums. Keep vocabularies with their owner, serialize at boundaries and preserve values.
+Routing IDs, audiences, scopes and deployment names remain separate. Preserve public imports,
+HTTP paths, operation IDs, JSON fields, error codes and protobuf numbers until explicit migration.
+
+Validate operational settings before side effects: CLI, environment, selected config, safe defaults.
+Check finite values, ranges and units. Keep algorithmic invariants and security allowlists reviewed.
+Use native paths and capability checks; verify platform support before claiming it. Add patterns for
+concrete boundaries, not universal frameworks. See [policy](policy.md) for ownership and migration.

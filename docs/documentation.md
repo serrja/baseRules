@@ -20,3 +20,8 @@ frontend and deployment owners keep their native tooling and useful directory la
 For knowledge forms, [knowledge](knowledge.md) owns the clean-source contract. Author guides stay
 under docs/template-guides and technical fixtures under scripts; neither belongs to the managed
 Markdown picker. The manifest owns identity, while compatibility notes describe transitions.
+
+Public engineering prose uses English; curated Russian forms retain language and content.
+New/renamed articles use lowercase_snake_case.md with standard/ecosystem exceptions. Use a few
+functional emoji, never as the only meaning or false badges. See [naming](naming.md) and the
+[repository profile](documentation_profile.md).

@@ -1,54 +1,56 @@
-# Releases and development snapshots
+# Releases
 
-A Git tag identifies source. Package/image publication, GitHub Releases and deployment require
-separate authorization. Preserve every published tag and existing main/test commit.
+Every new dev/main push, including docs-only changes, must produce a tested GitHub Release at
+its exact event SHA. Test is the integration branch. GitHub Releases do not authorize registry
+publication, production deployment or rewriting historical tags. The bundle remains npm-private.
 
-## Development snapshot
+## 📦 Identity and native metadata
 
-1. Review compatibility and update the canonical artifact metadata to its next unstable version.
-2. Review the full diff, staged paths and secret/conflict checks; run the applicable linters only.
-3. Prepare changes on the one temporary working branch. Record the actual SHA, patch and skipped
-   checks. Any commit or exact-ref push follows its explicit authorization.
-4. Follow the separately authorized working → test → dev → main route in
-   [development](development.md). Inspect all tag triggers before a separately authorized tag
-   operation on the selected accepted SHA; use one new annotated `v<version>`.
-   For a lint-only snapshot, its annotation includes
-   `development snapshot; lint-only; tests not run` and the actual scope. If manual acceptance
-   was run, use the measured scope instead; never label executed tests as not run.
-5. Push that exact tag ref and read back its object and peeled commit. Never push all tags or
-   overwrite a tag. A development snapshot is not a verified stable release.
+`package.json` owns the intended native version line; the resolver considers existing immutable
+tags and that floor. Main uses the next patch after the latest stable unless the reviewed native
+intent selects a higher base. Dev uses the next target base and monotonically increasing dev.N.
+GitHub tags are `vX.Y.Z-dev.N` (prerelease, not latest) and `vX.Y.Z` (stable). Never compare versions
+lexically. Python adapters use PEP 440 `X.Y.Z.devN`; npm/Dart/Helm use native prerelease syntax.
 
-## Later manual acceptance
+The [workflow](../.github/workflows/docs.yml) runs native checks first. Only its release job has
+contents-write. It validates the original push run, branch, full SHA and successful documentation
+job, then allocates one annotated tag containing repository, run ID, branch, SHA and version.
+This durable allocation survives a failure before release/assets. An existing allocation is reused
+only when every identity field and the tag target match. Conflicts fail, never force-update.
 
-Tests, type checking, packaging and full `make ci-local` remain available only by explicit request.
-A promotion through test, dev and main has separate phase authorizations and required protections. A candidate
-with failing checks is not accepted; unavailable checks are blocked. Do not move new work into
-main/test or publish packages merely to activate a manual workflow defined only in dev.
+An isolated git export of the exact SHA receives npm metadata injection without a source commit.
+The native pack/verify checks every bundled byte and internal version. Assets contain the tarball,
+checksums and release-manifest.json with source identity and the explicit metadata transformation.
+Stable packaging is rebuilt with stable metadata; a prerelease tarball is never renamed as stable.
+Draft releases are completed only after asset integrity checks, then read back with tag identity.
+Recovery of an older source event never replaces a newer published source as latest, even when
+its newly allocated patch number is higher. Existing differing assets, identity or channels fail. No npm publish or production deploy occurs.
 
-The rules bundle version is owned by `package.json`; `npm version <version> --no-git-tag-version
---ignore-scripts` updates npm metadata without committing. Python uses PEP 440 development
-versions; npm/Dart/Helm use their native prerelease syntax. See [versioning](versioning.md).
+## 🔄 Queue and recovery
 
-## Fully checked development candidate
+One repository-wide release job queue serializes allocation/publish across dev and main; ordinary
+checks remain parallel. GitHub supports [queue: max](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency)
+with up to 100 pending jobs. Overflow/canceled/failed events still require reconciliation; a queue
+alone is not proof that every event was published.
 
-When explicitly requested, prepare Node 24 tools with `npm ci --ignore-scripts`, then run the
-template checker, native tests, `make lint`, full `npm audit --json` and
-`npm audit --omit=dev --json`. Preserve actual commands, exit codes and reports outside Git.
-An omit-dev result does not replace the full audit. Review compatibility and the complete lock
-diff for a dependency override; repeat CLI glob, dotfile and ignore regressions when it changes.
+Use `node scripts/reconcile.mjs <bootstrap-UTC-time>` to compare original dev/main push runs with
+published release identities after this workflow was enabled. It is read-only and prints missing
+or unfinished events. Inspect each source run and rerun that original run with
+`gh run rerun RUN_ID --repo serrja/baseRules`; never substitute today's branch head or dispatch a
+new event as a replacement. Rerun all jobs if native checks failed. Do not mark a failed source
+accepted merely because a later SHA passes. Runs outside GitHub retention need explicit recovery
+from preserved event evidence; do not invent event IDs or silently backfill pre-bootstrap history.
 
-Review and commit only the checked task files on the existing temporary branch. On a clean
-Git checkout of that exact commit, run the full `make ci-local` and full audit. If local untracked
-settings affect source identity, preserve them and use a temporary detached verification worktree;
-do not exclude them from the managed Git identity contract. Match the final commit, tree, metadata,
-source identity, image ID, receipts and artifacts. New source changes need fresh affected checks.
+Publish happens within the same DAG. Do not rely on GITHUB_TOKEN-created tags/releases triggering
+another workflow. PRs never receive release credentials. This local workflow preserves the common
+contract while a reviewed reusable workflow pin is pending; adopt that pin through a reviewed
+consumer change, without claiming an unavailable upstream artifact is already integrated.
 
-Obtain source acceptance and authorization for the exact working → test → dev → main transitions,
-PR changes, tag and temporary-ref retirement. Recheck protections, triggers and refs before each
-phase, then read back its result. An authorized fast-forward must preserve the checked commit;
-if a merge creates another commit, verify its actual SHA before later phase authorization.
+## ✅ Acceptance
 
-After acceptance, an authorized annotated tag may say `development snapshot; full local acceptance`
-and list the actual Node/test, lint, audit and CI scope with the resolved commit. Record failed,
-skipped or unavailable checks honestly. Full local verification does not make a prerelease stable
-or prove consumer installation, native Obsidian behavior or notebook execution.
+Before each promotion inspect exact refs, full diff, current checks and required independent review.
+Protect test/dev/main and retain ancestry. See [development](development.md). Verify tag peeled SHA,
+prerelease/latest status, package metadata, asset digests and exact run identity after publication.
+Local tests cover branch guards, numeric versions, retry identity, tag conflicts, bundle integrity
+and source forms. Actual hosted runs establish workflow/queue permissions; do not represent mocked
+checks or unexecuted failure drills as live release evidence.

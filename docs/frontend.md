@@ -45,5 +45,5 @@ Generated/native sources stay with their generator; a web-only delivery does not
 Run native autofix/format, repeat with no diff, then lint, types and existing unit/widget/browser
 checks on the new build. Include Vue SFC, type-only and alias imports, side effects and idempotence
 in import-rule acceptance. Keep one shared gameplay implementation and one Flutter engine/view.
-Coverage below 100% or reduced coverage is a warning; failing tests, formatting, types, builds or
+Record coverage baseline and explain reductions without a universal 100% threshold; failing tests, formatting, types, builds or
 corrupt reports are failures. See [engineering](engineering.md) for delivery boundaries.
