@@ -6,12 +6,19 @@ This repository owns shared policy and reusable forms; filled personal notes and
 
 ```bash
 make help
-make lint
+npm ci --ignore-scripts
+make check
+make ci-local
 ```
 
 [Development](docs/development.md) · [Versioning](docs/versioning.md) · [Releases](docs/releases.md) · [Changelog](CHANGELOG.md)
 
+Use Node 24.22.0 and the locked npm dependencies.
+
 ## Rules
+
+- [Policy baseline](docs/policy.md): refactor-policy-v3, migration and ownership.
+- [Naming](docs/naming.md) and [documentation profile](docs/documentation_profile.md).
 
 - [Engineering](docs/engineering.md): boundaries, Python and verified delivery.
 - [Documentation](docs/documentation.md): readable navigation and one owner per explanation.
