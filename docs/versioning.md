@@ -2,7 +2,9 @@
 
 Each independently delivered artifact has one canonical version source and its own release line.
 The rules and all document templates in this repository form one bundle: `package.json` owns its
-version; `package-lock.json` is updated by npm. Individual notes, images and pages have no separate
+intended version line; `package-lock.json` is updated by npm. The release resolver allocates an
+immutable event version and injects matching metadata into an isolated export, never back into
+permanent branches. Individual notes, images and pages have no separate
 runtime version. Existing historical Git revisions remain valid provenance.
 
 ## Compatibility decision
